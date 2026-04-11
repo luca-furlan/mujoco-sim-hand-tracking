@@ -1,7 +1,7 @@
 COSA FARE (soluzione concreta — tutto sul PC Windows, VR col Quest)
 ===================================================================
 
-Perché Docker: serve solo se vuoi Linux/CI. Per te il percorso reale è QUESTA cartella g1-local.
+Percorso reale: QUESTA cartella (Python + venv + MuJoCo in locale), niente Docker.
 
 PASSO 1 — Una tantum---------------------
 Apri PowerShell nella cartella g1-local:
@@ -44,6 +44,6 @@ Allora usa un tunnel HTTPS “vero” (account gratuito):
 LIMITI onesti
 -------------
 - Io nel repo posso darti sim + pagina + istruzioni. Non posso compilare un APK Unity sul tuo PC senza Unity installato.
-- Se WebXR sul Quest continua a fallire, l’unica alternativa robusta è un’app Unity (Meta XR) che mandi comandi al PC (vedi g1-sim-docker/VR_QUEST.txt e udp_zmq_bridge.py).
+- Se WebXR sul Quest continua a fallire, l’unica alternativa robusta è un’app Unity (Meta XR) che mandi comandi al PC (es. bridge UDP/ZMQ verso questo server), da progettare a parte.
 
 In sintesi: inizia da PASSO 1–3 qui sopra; è il massimo che si può chiudere solo con Python + browser Quest.
