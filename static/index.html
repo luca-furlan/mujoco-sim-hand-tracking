@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>G1 local — VR teleop</title>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; background: #000; color: #e8e8e8; }
+    #hud { position: fixed; left: 10px; top: 10px; z-index: 100; background: rgba(0,0,0,.6);
+      padding: 10px 14px; border-radius: 8px; font-size: 13px; max-width: 420px; }
+    #hud.vr-hidden { visibility: hidden; width: 0; height: 0; overflow: hidden; padding: 0; margin: 0; border: none; }
+    #xr-foot { position: fixed; left: 8px; right: 8px; bottom: 12px; z-index: 150; text-align: center;
+      font-size: 13px; color: #e2e8f0; text-shadow: 0 0 6px #000, 0 0 12px #000; pointer-events: none;
+      display: none; line-height: 1.35; }
+    #xr-foot.on { display: block; }
+    #vr-tools {
+      position: fixed; left: 10px; bottom: 10px; z-index: 200; display: block;
+      background: rgba(15,23,42,.92); padding: 10px 14px; border-radius: 10px; font-size: 13px;
+      border: 1px solid rgba(148,163,184,.35); max-width: 320px; box-shadow: 0 4px 24px rgba(0,0,0,.4);
+    }
+    #vr-tools label { cursor: pointer; display: flex; align-items: center; gap: 10px; user-select: none; }
+    #vr-tools input { width: 18px; height: 18px; accent-color: #38bdf8; }
+    #vr-tools .hint { margin-top: 8px; font-size: 11px; color: #94a3b8; line-height: 1.35; }
+    button { margin: 4px 8px 0 0; padding: 8px 14px; border: none; border-radius: 6px;
+      background: #2563eb; color: #fff; font-weight: 600; cursor: pointer; }
+    #status { margin-top: 8px; color: #94a3b8; font-size: 12px; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <button type="button" id="btn-vr">VR</button>
+    <strong>G1</strong> locale — tavolo + oggetti (pinch), robot, passthrough opzionale
+    <div id="status">Connessione…</div>
+  </div>
+  <div id="vr-tools">
+    <label>
+      <input type="checkbox" id="chk-passthrough" />
+      Passthrough / camera mista
+    </label>
+    <div class="hint">Sul Quest 3/Pro prova sessione AR (stanza reale + tavolo/oggetti). Altrimenti VR con sfondo trasparente. Griglia e robot si spengono.</div>
+  </div>
+  <div id="xr-foot" aria-live="polite"></div>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "/static/vendor/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+      "cannon-es": "https://esm.sh/cannon-es@0.20.0"
+    }
+  }
+  </script>
+  <script type="module" src="/static/app.js?v=28"></script>
+</body>
+</html>

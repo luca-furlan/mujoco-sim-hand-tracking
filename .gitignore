@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Ambiente / segreti
+.env
+.env.*
+
+# Certificati dev (rigenerati da server.py)
+certs/
+
+# Menagerie: scaricata da SETUP.ps1 (sparse clone)
+vendor/mujoco_menagerie/
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
