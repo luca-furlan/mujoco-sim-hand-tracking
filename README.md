@@ -1,5 +1,7 @@
 # G1 local — teleoperazione VR (WebXR)
 
+Repository: [github.com/luca-furlan/mujoco-sim-hand-tracking](https://github.com/luca-furlan/mujoco-sim-hand-tracking)
+
 Server Python (FastAPI + MuJoCo) con pagina **Three.js** per controllare il robot **Unitree G1** in simulazione, con **hand tracking**, pinch su oggetti sul tavolo e opzione passthrough.
 
 ## Requisiti
