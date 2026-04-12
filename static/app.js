@@ -272,9 +272,11 @@ scene.add(sun);
 scene.add(sun.target);
 sun.target.position.set(0, 0.85, -0.6);
 
-/** Pavimento, griglia, parete: nascosti in passthrough insieme. */
+/** Griglia + parete: nascosti in passthrough (camera mista). Il nastro è in `conveyorGroup` così resta visibile in VR/AR. */
 const roomShell = new THREE.Group();
 scene.add(roomShell);
+const conveyorGroup = new THREE.Group();
+scene.add(conveyorGroup);
 
 const gridHelper = new THREE.GridHelper(26, 52, 0x4a5f7a, 0x283246);
 gridHelper.position.y = 0.004;
@@ -374,7 +376,7 @@ function buildIndustrialConveyorBelt() {
   beltMesh.position.set((BELT.x0 + BELT.x1) * 0.5, BELT_VIS_TOP - beltThick * 0.5, (BELT.z0 + BELT.z1) * 0.5);
   beltMesh.castShadow = true;
   beltMesh.receiveShadow = true;
-  roomShell.add(beltMesh);
+  conveyorGroup.add(beltMesh);
 
   const frameMat = new THREE.MeshStandardMaterial({
     color: 0x343b4d,
@@ -387,7 +389,7 @@ function buildIndustrialConveyorBelt() {
   s0.position.set(beltMesh.position.x, sideY, BELT.z0 - 0.028);
   const s1 = s0.clone();
   s1.position.z = BELT.z1 + 0.028;
-  roomShell.add(s0, s1);
+  conveyorGroup.add(s0, s1);
 
   const legGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.42, 12);
   const frameBottomY = sideY - 0.026;
@@ -397,10 +399,9 @@ function buildIndustrialConveyorBelt() {
       const leg = new THREE.Mesh(legGeo, frameMat);
       leg.position.set(sx, Math.max(0.21, legCy), sz);
       leg.castShadow = true;
-      roomShell.add(leg);
+      conveyorGroup.add(leg);
     }
   }
-
 }
 
 const tableTop = new THREE.Mesh(
@@ -840,12 +841,14 @@ function applyPassthroughVisuals() {
   const on = passthroughWanted && renderer.xr.isPresenting;
   if (on) {
     roomShell.visible = false;
+    conveyorGroup.visible = true;
     scene.background = null;
     scene.fog = null;
     renderer.setClearColor(0x000000, 0);
     robotGroup.visible = false;
   } else {
     roomShell.visible = true;
+    conveyorGroup.visible = true;
     scene.background = BG_NORMAL.clone();
     scene.fog = new THREE.Fog(BG_NORMAL.getHex(), 5.5, 38);
     renderer.setClearColor(0x000000, 1);
@@ -1412,6 +1415,7 @@ renderer.xr.addEventListener("sessionend", () => {
     releaseBody(o, null, null);
   }
   roomShell.visible = true;
+  conveyorGroup.visible = true;
   scene.background = BG_NORMAL.clone();
   scene.fog = new THREE.Fog(BG_NORMAL.getHex(), 5.5, 38);
   renderer.setClearColor(0x000000, 1);
