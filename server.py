@@ -13,6 +13,8 @@ import json
 import os
 import socket
 import struct
+import time
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from ipaddress import ip_address
 from pathlib import Path
@@ -35,7 +37,15 @@ SIM_LOCK = asyncio.Lock()
 FREE_QVEL_START: int | None = None
 FREE_QVEL_END: int | None = None
 REF_CTRL: Any = None
+ARM_CTRL_PREV: np.ndarray | None = None
+_ARM_AID_ALL: list[int] = []
+LAST_INPUT_MONO: float | None = None
 VIZ_GEOM_INDICES: list[int] = []
+
+# Timeout senza messaggi dal client (es. link perso). 0 = disattivato.
+_WATCHDOG_SEC = float(os.environ.get("WATCHDOG_SEC", "0.45"))
+# Limite |Δctrl| al passo di sim per attuatori braccia (rad/s * timestep). 0 = disattivato.
+_ARM_MAX_CTRL_RATE = float(os.environ.get("ARM_MAX_CTRL_RATE", "3.0"))
 
 # Polso target mondo (MuJoCo z-up), None = non aggiornare braccio
 HAND_LEFT: np.ndarray | None = None
@@ -93,7 +103,7 @@ def _find_free_joint() -> None:
 
 
 def load_model() -> None:
-    global MODEL, DATA, REF_CTRL
+    global MODEL, DATA, REF_CTRL, ARM_CTRL_PREV, _ARM_AID_ALL
     if MODEL is not None:
         return
     if not SCENE.is_file():
@@ -103,6 +113,10 @@ def load_model() -> None:
     _find_free_joint()
     mujoco.mj_resetDataKeyframe(MODEL, DATA, 0)
     REF_CTRL = DATA.ctrl.copy()
+    la, _, _ = _arm_actuator_and_qpos(MODEL, LEFT_ARM_JOINTS)
+    ra, _, _ = _arm_actuator_and_qpos(MODEL, RIGHT_ARM_JOINTS)
+    _ARM_AID_ALL = la + ra
+    ARM_CTRL_PREV = REF_CTRL.copy()
     global VIZ_GEOM_INDICES, VIZ_MESH_CACHE
     VIZ_GEOM_INDICES = _robot_visual_mesh_geom_indices(MODEL)
     VIZ_MESH_CACHE = None
@@ -338,16 +352,68 @@ def apply_hands_ik() -> None:
         _ik_arm_to_target_clean(M, d, r_wrist, r_sh, RIGHT_ARM_JOINTS, rd, rq, ra, HAND_RIGHT)
 
 
+def _touch_teleop_alive() -> None:
+    global LAST_INPUT_MONO
+    LAST_INPUT_MONO = time.monotonic()
+
+
+def _watchdog_maybe_failsafe() -> None:
+    """Se non arrivano ping/input da troppo tempo: ferma base, abbandona hand-IK."""
+    global HAND_LEFT, HAND_RIGHT
+    if _WATCHDOG_SEC <= 0.0 or LAST_INPUT_MONO is None:
+        return
+    if time.monotonic() - LAST_INPUT_MONO <= _WATCHDOG_SEC:
+        return
+    HAND_LEFT = HAND_RIGHT = None
+    CMD["lx"] = CMD["ly"] = CMD["rx"] = CMD["ry"] = 0.0
+    CMD["left_trig"] = CMD["right_trig"] = 0.0
+
+
+def _rate_limit_arm_actuators() -> None:
+    """Limita la velocità di variazione dei riferimenti braccia (sicurezza verso hardware futuro)."""
+    if (
+        MODEL is None
+        or DATA is None
+        or ARM_CTRL_PREV is None
+        or _ARM_MAX_CTRL_RATE <= 0.0
+        or not _ARM_AID_ALL
+    ):
+        return
+    dt = float(MODEL.opt.timestep)
+    max_step = _ARM_MAX_CTRL_RATE * dt
+    for aid in _ARM_AID_ALL:
+        prev = float(ARM_CTRL_PREV[aid])
+        v = float(DATA.ctrl[aid])
+        DATA.ctrl[aid] = float(np.clip(v, prev - max_step, prev + max_step))
+
+
+def _sync_arm_ctrl_prev() -> None:
+    global ARM_CTRL_PREV
+    if DATA is None or ARM_CTRL_PREV is None or not _ARM_AID_ALL:
+        return
+    for aid in _ARM_AID_ALL:
+        ARM_CTRL_PREV[aid] = float(DATA.ctrl[aid])
+
+
 def step_sim(dt: float) -> None:
     assert MODEL is not None and DATA is not None
+    _watchdog_maybe_failsafe()
     if REF_CTRL is not None:
         DATA.ctrl[:] = REF_CTRL
     apply_hands_ik()
+    _rate_limit_arm_actuators()
     apply_teleop(dt)
     mujoco.mj_step(MODEL, DATA)
+    _sync_arm_ctrl_prev()
 
 
-app = FastAPI()
+@asynccontextmanager
+async def _lifespan(_app: FastAPI):
+    load_model()
+    yield
+
+
+app = FastAPI(lifespan=_lifespan)
 
 
 @app.middleware("http")
@@ -355,11 +421,6 @@ async def _xr_headers(request: Request, call_next) -> Response:
     r = await call_next(request)
     r.headers.setdefault("Permissions-Policy", "xr-spatial-tracking=(self)")
     return r
-
-
-@app.on_event("startup")
-def _startup() -> None:
-    load_model()
 
 
 @app.get("/")
@@ -382,6 +443,8 @@ async def health() -> dict[str, Any]:
         "scene": str(SCENE),
         "http_only": http_only,
         "listen_port": port,
+        "watchdog_sec": _WATCHDOG_SEC,
+        "arm_max_ctrl_rate": _ARM_MAX_CTRL_RATE,
         "hint": f"WebXR: https://<IP>:{https_port}/ (cert. autofirmato). HTTP_ONLY=1 -> http://<IP>:{plain_port}/ senza VR su LAN.",
     }
 
@@ -404,8 +467,13 @@ async def _drain_ws(ws: WebSocket) -> None:
             msg = json.loads(raw)
         except json.JSONDecodeError:
             continue
-        if msg.get("type") != "input":
+        mtype = msg.get("type")
+        if mtype == "ping":
+            _touch_teleop_alive()
             continue
+        if mtype != "input":
+            continue
+        _touch_teleop_alive()
         ax = msg.get("axes") or {}
         CMD["lx"] = float(ax.get("lx", 0.0))
         CMD["ly"] = float(ax.get("ly", 0.0))
@@ -434,6 +502,7 @@ async def g1_arm_meshes() -> dict[str, Any]:
 @app.websocket("/ws")
 async def ws_endpoint(ws: WebSocket) -> None:
     await ws.accept()
+    _touch_teleop_alive()
     hz = float(os.environ.get("WS_HZ", "60"))
     try:
         while True:

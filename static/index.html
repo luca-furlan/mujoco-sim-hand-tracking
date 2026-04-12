@@ -21,6 +21,34 @@
     #vr-tools label { cursor: pointer; display: flex; align-items: center; gap: 10px; user-select: none; }
     #vr-tools input { width: 18px; height: 18px; accent-color: #38bdf8; }
     #vr-tools .hint { margin-top: 8px; font-size: 11px; color: #94a3b8; line-height: 1.35; }
+    #hand-calib {
+      position: fixed; right: 10px; top: 10px; z-index: 200; max-width: 300px;
+      background: rgba(15,23,42,.94); padding: 12px 14px; border-radius: 10px; font-size: 12px;
+      border: 1px solid rgba(148,163,184,.4); box-shadow: 0 4px 24px rgba(0,0,0,.45);
+      user-select: none; -webkit-user-select: none;
+    }
+    #hand-calib h3 { margin: 0 0 8px; font-size: 13px; font-weight: 650; color: #f1f5f9; }
+    #hand-calib .hint { font-size: 10px; color: #94a3b8; line-height: 1.35; margin-bottom: 10px; }
+    #hand-calib .axis-row { display: grid; grid-template-columns: 14px 1fr auto; gap: 6px; align-items: center; margin-bottom: 8px; }
+    #hand-calib .axis-row label { font-weight: 600; color: #7dd3fc; font-size: 11px; }
+    #hand-calib .axis-row input[type="range"] { width: 100%; }
+    #hand-calib .axis-row .val { font-variant-numeric: tabular-nums; color: #e2e8f0; min-width: 52px; text-align: right; font-size: 11px; }
+    #hand-calib .btns { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+    #hand-calib .btns button {
+      margin: 0; padding: 8px 10px; min-width: 40px; min-height: 40px; font-size: 15px;
+      background: #334155; color: #f8fafc; border-radius: 8px; touch-action: manipulation;
+    }
+    #hand-calib .btns button:active { background: #475569; }
+    #hand-calib #calib-reset { width: 100%; margin-top: 6px; background: #b45309; }
+    #hand-calib #calib-pad {
+      width: 100%; height: 112px; margin-top: 10px; border-radius: 12px;
+      background: radial-gradient(circle at center, rgba(56,189,248,.15) 0%, rgba(30,41,59,.9) 55%);
+      border: 1px solid rgba(148,163,184,.35); touch-action: none; cursor: grab; position: relative;
+    }
+    #hand-calib #calib-pad span {
+      pointer-events: none; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: #64748b; text-align: center; padding: 8px;
+    }
     button { margin: 4px 8px 0 0; padding: 8px 14px; border: none; border-radius: 6px;
       background: #2563eb; color: #fff; font-weight: 600; cursor: pointer; }
     #status { margin-top: 8px; color: #94a3b8; font-size: 12px; line-height: 1.4; }
@@ -29,7 +57,7 @@
 <body>
   <div id="hud">
     <button type="button" id="btn-vr">VR</button>
-    <strong>G1</strong> locale — tavolo + oggetti (pinch), robot, passthrough opzionale
+       <strong>G1</strong> locale — cella industriale, nastro, 2 pezzi da assemblare (pinch), robot, passthrough opzionale
     <div id="status">Connessione…</div>
   </div>
   <div id="vr-tools">
@@ -39,6 +67,47 @@
     </label>
     <div class="hint">Sul Quest 3/Pro prova sessione AR (stanza reale + tavolo/oggetti). Altrimenti VR con sfondo trasparente. Griglia e robot si spengono.</div>
   </div>
+  <aside id="hand-calib" aria-label="Calibrazione mani simulatore">
+    <h3>Calibrazione mani → sim</h3>
+    <div class="hint">Offset in metri nel frame <strong>MuJoCo</strong> (dopo XR→sim). Si somma a ogni mano; salvato in questo browser.</div>
+    <div class="axis-row">
+      <label>X</label>
+      <input type="range" id="calib-x-slider" min="-0.6" max="0.6" step="0.002" value="0" />
+      <span class="val" id="calib-x-val">0.000</span>
+    </div>
+    <div class="btns" data-axis="x">
+      <button type="button" data-d="-0.02" title="-2 cm">−−</button>
+      <button type="button" data-d="-0.005" title="-5 mm">−</button>
+      <button type="button" data-d="0.005" title="+5 mm">+</button>
+      <button type="button" data-d="0.02" title="+2 cm">++</button>
+    </div>
+    <div class="axis-row">
+      <label>Y</label>
+      <input type="range" id="calib-y-slider" min="-0.6" max="0.6" step="0.002" value="0" />
+      <span class="val" id="calib-y-val">0.000</span>
+    </div>
+    <div class="btns" data-axis="y">
+      <button type="button" data-d="-0.02">−−</button>
+      <button type="button" data-d="-0.005">−</button>
+      <button type="button" data-d="0.005">+</button>
+      <button type="button" data-d="0.02">++</button>
+    </div>
+    <div class="axis-row">
+      <label>Z</label>
+      <input type="range" id="calib-z-slider" min="-0.6" max="0.6" step="0.002" value="0" />
+      <span class="val" id="calib-z-val">0.000</span>
+    </div>
+    <div class="btns" data-axis="z">
+      <button type="button" data-d="-0.02">−−</button>
+      <button type="button" data-d="-0.005">−</button>
+      <button type="button" data-d="0.005">+</button>
+      <button type="button" data-d="0.02">++</button>
+    </div>
+    <div id="calib-pad" role="slider" aria-label="Pad 2D offset X Y">
+      <span>Tieni premuto e trascina: regola <strong>X</strong> / <strong>Y</strong> (su Quest: un dito sul pad)</span>
+    </div>
+    <button type="button" id="calib-reset">Azzera offset</button>
+  </aside>
   <div id="xr-foot" aria-live="polite"></div>
   <script type="importmap">
   {
@@ -49,6 +118,6 @@
     }
   }
   </script>
-  <script type="module" src="/static/app.js?v=28"></script>
+  <script type="module" src="/static/app.js?v=37"></script>
 </body>
 </html>
