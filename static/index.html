@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>G1 local — VR teleop</title>
+  <title>G1 + Mani — VR teleop + Teaching</title>
   <style>
     body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; background: #000; color: #e8e8e8; }
     #hud { position: fixed; left: 10px; top: 10px; z-index: 100; background: rgba(0,0,0,.6);
@@ -18,106 +18,80 @@
       background: rgba(15,23,42,.92); padding: 10px 14px; border-radius: 10px; font-size: 13px;
       border: 1px solid rgba(148,163,184,.35); max-width: 320px; box-shadow: 0 4px 24px rgba(0,0,0,.4);
     }
+    #vr-tools.vr-hidden { display: none; }
     #vr-tools label { cursor: pointer; display: flex; align-items: center; gap: 10px; user-select: none; }
     #vr-tools input { width: 18px; height: 18px; accent-color: #38bdf8; }
     #vr-tools .hint { margin-top: 8px; font-size: 11px; color: #94a3b8; line-height: 1.35; }
-    #hand-calib {
-      position: fixed; right: 10px; top: 10px; z-index: 200; max-width: 300px;
-      background: rgba(15,23,42,.94); padding: 12px 14px; border-radius: 10px; font-size: 12px;
-      border: 1px solid rgba(148,163,184,.4); box-shadow: 0 4px 24px rgba(0,0,0,.45);
-      user-select: none; -webkit-user-select: none;
-    }
-    #hand-calib h3 { margin: 0 0 8px; font-size: 13px; font-weight: 650; color: #f1f5f9; }
-    #hand-calib .hint { font-size: 10px; color: #94a3b8; line-height: 1.35; margin-bottom: 10px; }
-    #hand-calib .axis-row { display: grid; grid-template-columns: 14px 1fr auto; gap: 6px; align-items: center; margin-bottom: 8px; }
-    #hand-calib .axis-row label { font-weight: 600; color: #7dd3fc; font-size: 11px; }
-    #hand-calib .axis-row input[type="range"] { width: 100%; }
-    #hand-calib .axis-row .val { font-variant-numeric: tabular-nums; color: #e2e8f0; min-width: 52px; text-align: right; font-size: 11px; }
-    #hand-calib .btns { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
-    #hand-calib .btns button {
-      margin: 0; padding: 8px 10px; min-width: 40px; min-height: 40px; font-size: 15px;
-      background: #334155; color: #f8fafc; border-radius: 8px; touch-action: manipulation;
-    }
-    #hand-calib .btns button:active { background: #475569; }
-    #hand-calib #calib-reset { width: 100%; margin-top: 6px; background: #b45309; }
-    #hand-calib #calib-pad {
-      width: 100%; height: 112px; margin-top: 10px; border-radius: 12px;
-      background: radial-gradient(circle at center, rgba(56,189,248,.15) 0%, rgba(30,41,59,.9) 55%);
-      border: 1px solid rgba(148,163,184,.35); touch-action: none; cursor: grab; position: relative;
-    }
-    #hand-calib #calib-pad span {
-      pointer-events: none; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 11px; color: #64748b; text-align: center; padding: 8px;
-    }
-    button { margin: 4px 8px 0 0; padding: 8px 14px; border: none; border-radius: 6px;
-      background: #2563eb; color: #fff; font-weight: 600; cursor: pointer; }
+    button { margin: 4px 4px 0 0; padding: 8px 14px; border: none; border-radius: 6px;
+      background: #2563eb; color: #fff; font-weight: 600; cursor: pointer; font-size: 13px; }
+    button:hover { background: #1d4ed8; }
+    button.active { outline: 2px solid #38bdf8; outline-offset: 1px; }
+    button.btn-danger { background: #dc2626; }
+    button.btn-danger:hover { background: #b91c1c; }
+    button.btn-green { background: #16a34a; }
+    button.btn-green:hover { background: #15803d; }
+    button.btn-amber { background: #d97706; }
+    button.btn-amber:hover { background: #b45309; }
     #status { margin-top: 8px; color: #94a3b8; font-size: 12px; line-height: 1.4; }
+    #mode-panel {
+      position: fixed; right: 10px; top: 10px; z-index: 200;
+      background: rgba(15,23,42,.95); padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(148,163,184,.35); max-width: 300px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.4); font-size: 13px;
+    }
+    #mode-panel h3 { margin: 0 0 8px 0; font-size: 14px; color: #e2e8f0; }
+    #mode-panel .mode-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    #mode-panel select { width: 100%; padding: 6px 8px; border-radius: 6px; background: #1e293b;
+      color: #e2e8f0; border: 1px solid #475569; font-size: 12px; margin-bottom: 6px; }
+    #mode-panel .rec-controls { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+    #mode-panel label { cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    #mode-panel input[type="checkbox"] { width: 16px; height: 16px; accent-color: #38bdf8; }
+    #mode-status { font-weight: 700; font-size: 16px; text-align: center; padding: 6px 0; }
+    .mode-idle { color: #64748b; }
+    .mode-realtime { color: #38bdf8; }
+    .mode-recording { color: #ef4444; animation: blink 1s infinite; }
+    .mode-playback { color: #22c55e; }
+    @keyframes blink { 50% { opacity: 0.5; } }
   </style>
 </head>
 <body>
   <div id="hud">
     <button type="button" id="btn-vr">VR</button>
-       <strong>G1</strong> locale — cella industriale, nastro, 2 pezzi da assemblare (pinch), robot, passthrough opzionale
+    <strong>G1 + Mani</strong> — teleop VR, 2 tavoli mirror (~2m), robot davanti
     <div id="status">Connessione…</div>
   </div>
   <div id="vr-tools">
     <label>
       <input type="checkbox" id="chk-passthrough" />
-      Passthrough / camera mista
+      Passthrough / camera mista (AR)
     </label>
-    <div class="hint">Sul Quest 3/Pro prova sessione AR (stanza reale + tavolo/oggetti). Altrimenti VR con sfondo trasparente. Griglia e robot si spengono.</div>
+    <div class="hint">AR: stanza reale + tavoli e robot visibili. In VR normale sfondo scuro — robot e tavoli restano visibili.</div>
   </div>
-  <aside id="hand-calib" aria-label="Calibrazione mani simulatore">
-    <h3>Calibrazione mani → sim</h3>
-    <div class="hint">Offset in metri nel frame <strong>MuJoCo</strong> (dopo XR→sim). Si somma a ogni mano; salvato in questo browser.</div>
-    <div class="axis-row">
-      <label>X</label>
-      <input type="range" id="calib-x-slider" min="-0.6" max="0.6" step="0.002" value="0" />
-      <span class="val" id="calib-x-val">0.000</span>
+  <div id="mode-panel" style="display:none">
+    <h3>Modalita'</h3>
+    <div id="mode-status" class="mode-idle">IDLE</div>
+    <div class="mode-btns">
+      <button type="button" id="btn-realtime" class="btn-green">Realtime</button>
+      <button type="button" id="btn-record" class="btn-danger">Registra</button>
+      <button type="button" id="btn-stop">Stop</button>
     </div>
-    <div class="btns" data-axis="x">
-      <button type="button" data-d="-0.02" title="-2 cm">−−</button>
-      <button type="button" data-d="-0.005" title="-5 mm">−</button>
-      <button type="button" data-d="0.005" title="+5 mm">+</button>
-      <button type="button" data-d="0.02" title="+2 cm">++</button>
+    <select id="sel-recording"><option value="">(nessuna registrazione)</option></select>
+    <div class="rec-controls">
+      <button type="button" id="btn-playback" class="btn-amber">Play</button>
+      <button type="button" id="btn-delete-rec" class="btn-danger" style="font-size:11px;padding:6px 10px;">Elimina</button>
+      <label><input type="checkbox" id="chk-loop" /> Loop</label>
     </div>
-    <div class="axis-row">
-      <label>Y</label>
-      <input type="range" id="calib-y-slider" min="-0.6" max="0.6" step="0.002" value="0" />
-      <span class="val" id="calib-y-val">0.000</span>
-    </div>
-    <div class="btns" data-axis="y">
-      <button type="button" data-d="-0.02">−−</button>
-      <button type="button" data-d="-0.005">−</button>
-      <button type="button" data-d="0.005">+</button>
-      <button type="button" data-d="0.02">++</button>
-    </div>
-    <div class="axis-row">
-      <label>Z</label>
-      <input type="range" id="calib-z-slider" min="-0.6" max="0.6" step="0.002" value="0" />
-      <span class="val" id="calib-z-val">0.000</span>
-    </div>
-    <div class="btns" data-axis="z">
-      <button type="button" data-d="-0.02">−−</button>
-      <button type="button" data-d="-0.005">−</button>
-      <button type="button" data-d="0.005">+</button>
-      <button type="button" data-d="0.02">++</button>
-    </div>
-    <div id="calib-pad" role="slider" aria-label="Pad 2D offset X Y">
-      <span>Tieni premuto e trascina: regola <strong>X</strong> / <strong>Y</strong> (su Quest: un dito sul pad)</span>
-    </div>
-    <button type="button" id="calib-reset">Azzera offset</button>
-  </aside>
+  </div>
   <div id="xr-foot" aria-live="polite"></div>
   <script type="importmap">
   {
     "imports": {
       "three": "/static/vendor/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-      "cannon-es": "https://esm.sh/cannon-es@0.20.0"
+      "three/addons/": "/static/vendor/three/examples/jsm/",
+      "cannon-es": "/static/vendor/cannon-es.js"
     }
   }
   </script>
-  <script type="module" src="/static/app.js?v=38"></script>
+  <script type="module" src="/static/app.js?v=mirror18"></script>
 </body>
 </html>
