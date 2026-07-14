@@ -997,7 +997,7 @@ async def _ws_reader(ws: WebSocket, done: asyncio.Event) -> None:
 @app.websocket("/ws")
 async def ws_endpoint(ws: WebSocket) -> None:
     await ws.accept()
-    hz = float(os.environ.get("WS_HZ", "30"))
+    hz = float(os.environ.get("WS_HZ", "100"))
     print(f"  [ws] accepted @ {hz}Hz", flush=True)
 
     done = asyncio.Event()

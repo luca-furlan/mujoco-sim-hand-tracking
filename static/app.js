@@ -299,7 +299,7 @@ const BG_NORMAL = new THREE.Color(0x0a0f18);
 const ROBOT_STAGE_DIST = 2.05;
 /** Gruppo mirror in world: z = -ROBOT_STAGE_DIST. Il G1 sta tra te (z≈0+) e quel tavolo. */
 const ROBOT_MIRROR_GROUP_Z = -ROBOT_STAGE_DIST;
-const ROBOT_STAGE_POS_DEFAULT = new THREE.Vector3(0, 0.50, ROBOT_MIRROR_GROUP_Z + 0.62);
+const ROBOT_STAGE_POS_DEFAULT = new THREE.Vector3(0, 0.36, ROBOT_MIRROR_GROUP_Z + 0.78);
 /** Yaw stanza (radianti): π/2 → fronte verso tavolo mirror (−Z). Teleop: reflect X prima di inv(roomFix). */
 const ROBOT_STAGE_YAW_DEFAULT = Math.PI / 2;
 const _ROBOT_REFLECT_X = new THREE.Matrix4().makeScale(-1, 1, 1);
@@ -503,6 +503,75 @@ function _mirrorPointRefSpace(p, out) {
   }
   _getMirrorAnchorWorld(_mirrorAnchor);
   out.copy(_mirrorAnchor).add(_mirrorWork);
+  return out;
+}
+
+function getTeleopHandUserZ0() {
+  try {
+    const v = parseFloat(new URLSearchParams(window.location.search).get("handuserz") || "");
+    if (Number.isFinite(v) && v > -2.5 && v < 0.5) return v;
+  } catch (_) {}
+  return -0.35;
+}
+
+function getTeleopHandRobotZ0() {
+  try {
+    const v = parseFloat(new URLSearchParams(window.location.search).get("handrobotz") || "");
+    //if (Number.isFinite(v) && v > -3.5 && v < 0.5) return v;
+  } catch (_) {}
+  //if (Number.isFinite(_robotRoomPos.z) && _robotRoomPos.z < -0.5) return _robotRoomPos.z - 0.22;
+  return -2.5;
+}
+
+function getTeleopHandReachScale() {
+  try {
+    const v = parseFloat(new URLSearchParams(window.location.search).get("handreachscale") || "");
+    if (Number.isFinite(v) && v >= 0.6 && v <= 2.5) return v;
+  } catch (_) {}
+  return 1.28;
+}
+
+/**
+ * Yellow IK target height (room Y, meters). Edit these constants to fine-tune.
+ * out.y = TELEOP_HAND_ROBOT_Y0 + TELEOP_HAND_HEIGHT_SCALE * (rawY - TELEOP_HAND_USER_Y0) + TELEOP_HAND_Y_OFFSET
+ */
+const TELEOP_HAND_USER_Y0 = 0;
+const TELEOP_HAND_ROBOT_Y0 = 0;
+const TELEOP_HAND_HEIGHT_SCALE = 1;
+const TELEOP_HAND_Y_OFFSET = -1;
+
+function applyTeleopHandHeightMap(rawY) {
+  return (
+    TELEOP_HAND_ROBOT_Y0
+    + TELEOP_HAND_HEIGHT_SCALE * (rawY - TELEOP_HAND_USER_Y0)
+    + TELEOP_HAND_Y_OFFSET
+  );
+}
+
+/** Map Quest wrist depth/height → robot-side target (same motion sign, no plane reflection). */
+function _teleopHandReachMap(rawPos, out) {
+  const userZ0 = getTeleopHandUserZ0();
+  const robotZ0 = getTeleopHandRobotZ0();
+  const scale = getTeleopHandReachScale();
+  out.set(rawPos.x, applyTeleopHandHeightMap(rawPos.y), robotZ0 + scale * (rawPos.z - userZ0));
+  return out;
+}
+
+/**
+ * Teleop hand room target before MJ convert. Default: reach map (tune ?handuserz= ?handrobotz= ?handreachscale=).
+ * Yellow height: TELEOP_HAND_* constants above. ?handmirrorfull=1 = legacy desk-plane mirror.
+ */
+function _teleopHandRoomPoint(rawPos, frame, refSpace, out) {
+  if (!teleopHandMirrorPath() || !frame || !refSpace || !_headBasisFromFrame(frame, refSpace)) {
+    out.set(rawPos.x, applyTeleopHandHeightMap(rawPos.y), rawPos.z);
+    return out;
+  }
+  if (bootQueryFlag("handmirrorfull")) {
+    _mirrorPointRefSpace(rawPos, out);
+    out.y = applyTeleopHandHeightMap(rawPos.y);
+    return out;
+  }
+  _teleopHandReachMap(rawPos, out);
   return out;
 }
 
@@ -825,7 +894,7 @@ function updateHandGridDebug(frame, refSpace, handsTeleop, fingersRaw) {
       _hgSpheres[si].position.copy(raw);
       _hgSpheres[si].visible = true;
       if (teleopHandMirrorPath() && _headBasisFromFrame(frame, refSpace)) {
-        _mirrorPointRefSpace(raw, _handMirrorPostScratch);
+        _teleopHandRoomPoint(raw, frame, refSpace, _handMirrorPostScratch);
         mir = _handMirrorPostScratch.clone();
         _hgSpheres[si + 1].position.copy(mir);
         _hgSpheres[si + 1].visible = true;
@@ -1653,9 +1722,9 @@ function layoutRobotStageFromMirrorDesk() {
   let yaw = ROBOT_STAGE_YAW_DEFAULT;
   if (mirrorDeskTableTop) {
     mirrorDeskTableTop.getWorldPosition(_mirrorWork2);
-    const offsetFromTable = 1.12;
+    const offsetFromTable = 0.78;
     px = _mirrorWork2.x;
-    py = Math.max(0.42, _mirrorWork2.y - 0.30);
+    py = Math.max(0.36, _mirrorWork2.y - 0.48);
     pz = _mirrorWork2.z + offsetFromTable;
   }
   robotStage.position.set(0, 0, 0);
@@ -2914,7 +2983,14 @@ function _boostCurlForPinch(cur, pinch, gain = 0.9) {
 
 function readFingers(frame, refSpace) {
   const out = {};
-  if (!frame || !refSpace) return out;
+  const tracked = { left: false, right: false };
+  if (!frame || !refSpace) {
+    _fingersTrackedLastFrame.left = _fingersTrackedLastFrame.right = false;
+    _fingersTrackedPrevFrame.left = _fingersTrackedPrevFrame.right = false;
+    return out;
+  }
+  _fingersTrackedPrevFrame.left = _fingersTrackedLastFrame.left;
+  _fingersTrackedPrevFrame.right = _fingersTrackedLastFrame.right;
   const session = frame.session;
   for (const src of session.inputSources) {
     const side = handSide(src);
@@ -3610,7 +3686,7 @@ function readPads(frame) {
 }
 
 /**
- * Posa XR polso/grip target MJ. Con teleopHandMirrorPath applica _mirrorPointRefSpace come lo stick.
+ * XR wrist/grip → MJ IK target. Mirror L/R; forward depth not inverted (?handmirrorfull=1 for legacy).
  */
 function _mjFromXrHandTransform(t, frame, refSpace) {
   if (!t?.position) return null;
@@ -3622,7 +3698,7 @@ function _mjFromXrHandTransform(t, frame, refSpace) {
     return mjWorldHandTargetFromXrPosition(pos);
   }
   _handMirrorPreMjScratch.set(pos.x, pos.y, pos.z);
-  _mirrorPointRefSpace(_handMirrorPreMjScratch, _handMirrorPostScratch);
+  _teleopHandRoomPoint(_handMirrorPreMjScratch, frame, refSpace, _handMirrorPostScratch);
   return mjWorldHandTargetFromXrPosition(_handMirrorPostScratch);
 }
 
@@ -3692,7 +3768,7 @@ function readHands(frame, refSpace) {
           let mir = raw;
           if (_headBasisFromFrame(frame, refSpace)) {
             _handMirrorPreMjScratch.set(pos.x, pos.y, pos.z);
-            _mirrorPointRefSpace(_handMirrorPreMjScratch, _handMirrorPostScratch);
+            _teleopHandRoomPoint(_handMirrorPreMjScratch, frame, refSpace, _handMirrorPostScratch);
             mir = `[${_handMirrorPostScratch.x.toFixed(2)},${_handMirrorPostScratch.y.toFixed(2)},${_handMirrorPostScratch.z.toFixed(2)}]`;
           }
           const mj = out.right;
@@ -3729,6 +3805,7 @@ function _xrAnyHandTracked(session) {
   return false;
 }
 const XR_LENS_DIAG_FRAMES = 30;
+
 function animate(time, frame) {
   tickRobotGeomPoseSmooth(time);
   if (renderer.xr.isPresenting) {
