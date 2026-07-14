@@ -112,7 +112,7 @@ CMD: dict[str, float] = {
 # --- Finger curl targets (0=open, 1=closed), smoothed ---
 FINGERS_LEFT: np.ndarray | None = None   # 7 values: thumb(3) + index(2) + middle(2)
 FINGERS_RIGHT: np.ndarray | None = None
-_FINGER_SMOOTH = float(os.environ.get("FINGER_SMOOTH", "0.35"))
+_FINGER_SMOOTH = float(os.environ.get("FINGER_SMOOTH", "0.55"))
 
 # --- Head tracking for waist control ---
 HEAD_ORIENTATION: np.ndarray | None = None  # [yaw, pitch] in rad, MuJoCo frame

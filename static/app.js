@@ -764,9 +764,18 @@ function ensureHandGridDebug() {
 
 /**
  * Aggiorna overlay: ciano raw, magenta post-mirror, giallo MJ→stanza (inviato al server), verde polso sim.
- * @param {object} handsOut { left: mj[]|null, right: mj[]|null } da readHands (stesso payload WS)
+ * @param {object} handsTeleop { left: mj[]|null, right: mj[]|null } payload WS (post-swap IK)
+ * @param {object} fingersRaw { left?, right? } curl XR non swappato
  */
-function updateHandGridDebug(frame, refSpace, handsOut) {
+function _avgFingerCurl(fd) {
+  if (!fd) return 0;
+  const t = fd.thumb || [0, 0, 0];
+  const i = fd.index || [0, 0];
+  const m = fd.middle || [0, 0];
+  return (t[0] + t[1] + t[2] + i[0] + i[1] + m[0] + m[1]) / 7;
+}
+
+function updateHandGridDebug(frame, refSpace, handsTeleop, fingersRaw) {
   if (!bootQueryFlag("handgrid")) {
     if (_handGridDebugGroup) _handGridDebugGroup.visible = false;
     return;
@@ -783,8 +792,8 @@ function updateHandGridDebug(frame, refSpace, handsOut) {
   if (!session) return;
 
   const sides = [
-    { key: "left", si: 0, wristName: "left_wrist_yaw_link" },
-    { key: "right", si: 4, wristName: "right_wrist_yaw_link" },
+    { key: "left", si: 0 },
+    { key: "right", si: 4 },
   ];
   const linePos = _hgLineGeom.attributes.position.array;
   let li = 0;
@@ -793,11 +802,13 @@ function updateHandGridDebug(frame, refSpace, handsOut) {
   let gridCz = 0;
   let nCenter = 0;
 
-  for (const { key, si, wristName } of sides) {
+  for (const { key, si } of sides) {
+    const wristName = robotWristNameForXrSide(key);
+    const teleopSide = xrSideToTeleopSide(key);
     let raw = null;
     let mir = null;
     let mjThree = null;
-    const mj = handsOut?.[key];
+    const mj = handsTeleop?.[teleopSide];
     for (const src of session.inputSources) {
       if (src.handedness !== key || !src.hand) continue;
       const joint = src.hand.get("wrist") || src.hand.get("middle-finger-metacarpal");
@@ -862,6 +873,11 @@ function updateHandGridDebug(frame, refSpace, handsOut) {
     if (robotWristWorldForHandGrid(wristName, rob)) {
       _hgSpheres[si + 3].position.copy(rob);
       _hgSpheres[si + 3].visible = true;
+      const curl = _avgFingerCurl(fingersRawForTeleopSide(fingersRaw, teleopSide));
+      const s = 0.028 + curl * 0.022;
+      _hgSpheres[si + 3].scale.setScalar(s / 0.034);
+      const mat = _hgSpheres[si + 3].material;
+      if (mat?.color) mat.color.setRGB(0.2 + curl * 0.6, 1 - curl * 0.55, 0.2);
       if (mjThree) {
         linePos[li++] = mjThree.x;
         linePos[li++] = mjThree.y;
@@ -2545,12 +2561,29 @@ function swapHandsLrForTeleop(hands) {
   return { left: hands.right ?? null, right: hands.left ?? null };
 }
 
-function swapFingersLrForTeleop(fingers) {
-  if (!fingers || !robotPoseMirrorXEnabled() || bootQueryFlag("noswaphands")) return fingers || {};
-  const out = {};
-  if (fingers.left) out.right = fingers.left;
-  if (fingers.right) out.left = fingers.right;
-  return out;
+/** Mirror IK swaps hand labels; finger actuators stay anatomical (robotGroup mirror already flips visuals). */
+function teleopLrSwapActive() {
+  return robotPoseMirrorXEnabled() && !bootQueryFlag("noswaphands");
+}
+
+/** XR physical side → server teleop label (left/right in WS payload). */
+function xrSideToTeleopSide(xrSide) {
+  if (!teleopLrSwapActive()) return xrSide;
+  return xrSide === "left" ? "right" : "left";
+}
+
+/** Raw XR finger curl for one server teleop side. */
+function fingersRawForTeleopSide(fingersRaw, teleopSide) {
+  if (!fingersRaw) return null;
+  if (teleopLrSwapActive()) {
+    return teleopSide === "left" ? fingersRaw.right ?? null : fingersRaw.left ?? null;
+  }
+  return fingersRaw[teleopSide] ?? null;
+}
+
+function robotWristNameForXrSide(xrSide) {
+  const teleopSide = xrSideToTeleopSide(xrSide);
+  return teleopSide === "left" ? "left_wrist_yaw_link" : "right_wrist_yaw_link";
 }
 
 function handSide(src) {
@@ -2862,6 +2895,23 @@ function _curlNormalized(angle) {
   return Math.min(1.0, Math.max(0.0, angle / (Math.PI * 0.55)));
 }
 
+/** 0=open pinch, 1=closed — thumb-tip ↔ index-tip distance. */
+function _pinchCurlNormalized(frame, hand, refSpace) {
+  if (!_getJointPos(frame, hand, "thumb-tip", refSpace, _vThumb) ||
+      !_getJointPos(frame, hand, "index-finger-tip", refSpace, _vIndex)) return 0;
+  const dist = _vThumb.distanceTo(_vIndex);
+  const PINCH_CLOSE = 0.022;
+  const PINCH_OPEN = 0.095;
+  if (dist >= PINCH_OPEN) return 0;
+  if (dist <= PINCH_CLOSE) return 1;
+  return 1 - (dist - PINCH_CLOSE) / (PINCH_OPEN - PINCH_CLOSE);
+}
+
+function _boostCurlForPinch(cur, pinch, gain = 0.9) {
+  if (pinch <= 0) return cur;
+  return Math.min(1, Math.max(cur, cur + pinch * gain * (1 - cur)));
+}
+
 function readFingers(frame, refSpace) {
   const out = {};
   if (!frame || !refSpace) return out;
@@ -2872,36 +2922,57 @@ function readFingers(frame, refSpace) {
     const h = src.hand;
     const fingerData = { thumb: [0, 0, 0], index: [0, 0], middle: [0, 0] };
 
+    const pw = new THREE.Vector3();
     const p0 = new THREE.Vector3(), p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3();
 
-    // Thumb: 3 curl values
+    // Thumb: wrist→MC→prox, MC→prox→dist, prox→dist→tip
+    if (_getJointPos(frame, h, "wrist", refSpace, pw) &&
+        _getJointPos(frame, h, "thumb-metacarpal", refSpace, p0) &&
+        _getJointPos(frame, h, "thumb-phalanx-proximal", refSpace, p1)) {
+      fingerData.thumb[0] = _curlNormalized(_angleBetweenSegments(pw, p0, p1));
+    }
     if (_getJointPos(frame, h, "thumb-metacarpal", refSpace, p0) &&
         _getJointPos(frame, h, "thumb-phalanx-proximal", refSpace, p1) &&
+        _getJointPos(frame, h, "thumb-phalanx-distal", refSpace, p2)) {
+      fingerData.thumb[1] = _curlNormalized(_angleBetweenSegments(p0, p1, p2));
+    }
+    if (_getJointPos(frame, h, "thumb-phalanx-proximal", refSpace, p1) &&
         _getJointPos(frame, h, "thumb-phalanx-distal", refSpace, p2) &&
         _getJointPos(frame, h, "thumb-tip", refSpace, p3)) {
-      fingerData.thumb[0] = _curlNormalized(_angleBetweenSegments(p0, p1, p2));
-      fingerData.thumb[1] = _curlNormalized(_angleBetweenSegments(p0, p1, p2));
       fingerData.thumb[2] = _curlNormalized(_angleBetweenSegments(p1, p2, p3));
     }
 
-    // Index: 2 curl values
+    // Index: 2 curl values (each segment independent)
     if (_getJointPos(frame, h, "index-finger-metacarpal", refSpace, p0) &&
         _getJointPos(frame, h, "index-finger-phalanx-proximal", refSpace, p1) &&
+        _getJointPos(frame, h, "index-finger-phalanx-intermediate", refSpace, p2)) {
+      fingerData.index[0] = _curlNormalized(_angleBetweenSegments(p0, p1, p2));
+    }
+    if (_getJointPos(frame, h, "index-finger-phalanx-proximal", refSpace, p1) &&
         _getJointPos(frame, h, "index-finger-phalanx-intermediate", refSpace, p2) &&
         _getJointPos(frame, h, "index-finger-phalanx-distal", refSpace, p3)) {
-      fingerData.index[0] = _curlNormalized(_angleBetweenSegments(p0, p1, p2));
       fingerData.index[1] = _curlNormalized(_angleBetweenSegments(p1, p2, p3));
     }
 
     // Middle + ring + pinky averaged into "middle" for Dex3-1
     let mProx = 0, mDist = 0, mCount = 0;
     for (const finger of ["middle-finger", "ring-finger", "pinky-finger"]) {
+      let fp = 0, fd = 0, fc = 0;
       if (_getJointPos(frame, h, `${finger}-metacarpal`, refSpace, p0) &&
           _getJointPos(frame, h, `${finger}-phalanx-proximal`, refSpace, p1) &&
+          _getJointPos(frame, h, `${finger}-phalanx-intermediate`, refSpace, p2)) {
+        fp = _curlNormalized(_angleBetweenSegments(p0, p1, p2));
+        fc++;
+      }
+      if (_getJointPos(frame, h, `${finger}-phalanx-proximal`, refSpace, p1) &&
           _getJointPos(frame, h, `${finger}-phalanx-intermediate`, refSpace, p2) &&
           _getJointPos(frame, h, `${finger}-phalanx-distal`, refSpace, p3)) {
-        mProx += _curlNormalized(_angleBetweenSegments(p0, p1, p2));
-        mDist += _curlNormalized(_angleBetweenSegments(p1, p2, p3));
+        fd = _curlNormalized(_angleBetweenSegments(p1, p2, p3));
+        fc++;
+      }
+      if (fc > 0) {
+        mProx += fp;
+        mDist += fd;
         mCount++;
       }
     }
@@ -2910,9 +2981,45 @@ function readFingers(frame, refSpace) {
       fingerData.middle[1] = mDist / mCount;
     }
 
+    const pinch = _pinchCurlNormalized(frame, h, refSpace);
+    if (pinch > 0) {
+      fingerData.thumb[1] = _boostCurlForPinch(fingerData.thumb[1], pinch);
+      fingerData.thumb[2] = _boostCurlForPinch(fingerData.thumb[2], pinch);
+      fingerData.index[0] = _boostCurlForPinch(fingerData.index[0], pinch);
+      fingerData.index[1] = _boostCurlForPinch(fingerData.index[1], pinch);
+    }
+
     out[side] = fingerData;
   }
   return out;
+}
+
+/** Merge dita (XR raw) con ultimo frame / pose aperta — allineate a `handsTeleop`, non swap doppio. */
+function buildFingersPayload(fingersRaw, handsTeleop) {
+  const payload = {};
+  let any = false;
+  const openPose = () => ({ thumb: [0, 0, 0], index: [0, 0], middle: [0, 0] });
+  for (const side of ["left", "right"]) {
+    if (handsTeleop?.[side] == null) continue;
+    const fd = fingersRawForTeleopSide(fingersRaw, side);
+    if (fd) {
+      payload[side] = {
+        thumb: [...fd.thumb],
+        index: [...fd.index],
+        middle: [...fd.middle],
+      };
+    } else {
+      payload[side] = _lastFingersSent?.[side]
+        ? {
+            thumb: [..._lastFingersSent[side].thumb],
+            index: [..._lastFingersSent[side].index],
+            middle: [..._lastFingersSent[side].middle],
+          }
+        : openPose();
+    }
+    any = true;
+  }
+  return any ? payload : null;
 }
 
 // =============== Head tracking ===============
@@ -3670,32 +3777,25 @@ function animate(time, frame) {
     const handsRaw = readHands(xrFrame, refSpace);
     const fingers = readFingers(xrFrame, refSpace);
     const handsTeleop = swapHandsLrForTeleop(handsRaw);
-    const fingersTeleop = swapFingersLrForTeleop(fingers);
     const head = readHeadPose(xrFrame, refSpace);
-    const fk = Object.keys(fingersTeleop);
+    const fingersPayload = buildFingersPayload(fingers, handsTeleop);
+    if (fingersPayload) _lastFingersSent = fingersPayload;
     if (bootQueryFlag("fingerdebug")) {
       _fingerDebugTick++;
       if (_fingerDebugTick % 45 === 0) {
         remoteLog(
           "[fingerdebug]",
-          fk.length ? JSON.stringify(fingersTeleop).slice(0, 280) : "(nessuna chiave dita questo frame)",
+          fingersPayload ? JSON.stringify(fingersPayload).slice(0, 280) : "(nessun payload dita)",
         );
       }
-    }
-    let fingersPayload = undefined;
-    if (fk.length) {
-      _lastFingersSent = fingersTeleop;
-      fingersPayload = fingersTeleop;
-    } else if (_lastFingersSent != null && (handsTeleop.left != null || handsTeleop.right != null)) {
-      fingersPayload = _lastFingersSent;
     }
     sendInput(
       ax,
       { left: handsTeleop.left ?? null, right: handsTeleop.right ?? null },
-      fingersPayload,
+      fingersPayload ?? undefined,
       head,
     );
-    updateHandGridDebug(xrFrame, refSpace, handsRaw);
+    updateHandGridDebug(xrFrame, refSpace, handsTeleop, fingers);
     updatePinchGrab(xrFrame, refSpace);
     updatePinchGrabMirror(xrFrame, refSpace);
     polishXrHandMeshes();
