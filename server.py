@@ -65,7 +65,7 @@ _ARM_LAST_Q: dict[str, np.ndarray | None] = {"left": None, "right": None}
 _ARM_LAST_CTRL: dict[str, np.ndarray | None] = {"left": None, "right": None}
 _HAND_OFF = np.array(
     [
-        float(os.environ.get("HAND_OFF_X", "0")),
+        float(os.environ.get("HAND_OFF_X", "0")),  # server-side IK nudge (m), MuJoCo frame
         float(os.environ.get("HAND_OFF_Y", "0")),
         float(os.environ.get("HAND_OFF_Z", "0")),
     ],
@@ -324,6 +324,36 @@ def snapshot() -> dict[str, Any]:
             gm.append(M4.flatten("F").tolist())
         out["geom_mat4"] = gm
     return out
+
+
+def joint_state() -> dict[str, Any]:
+    """Named joint angles (rad) + finger curls (0..1) for a real-robot relay.
+
+    Arm/waist ordering matches unitree_sdk2 G1_29 motor layout so a relay can
+    forward these directly as rt/arm_sdk targets. Fingers are exposed both as
+    Dex3 joint angles and as raw curl (0=open, 1=closed) for retargeting.
+    """
+    assert MODEL is not None and DATA is not None
+
+    def angles(names: list[str]) -> dict[str, float]:
+        out: dict[str, float] = {}
+        for n in names:
+            jid = mujoco.mj_name2id(MODEL, mujoco.mjtObj.mjOBJ_JOINT, n)
+            if jid >= 0:
+                out[n] = float(DATA.qpos[MODEL.jnt_qposadr[jid]])
+        return out
+
+    return {
+        "time": float(DATA.time),
+        "mode": MODE,
+        "waist": angles(WAIST_JOINTS),
+        "left_arm": angles(LEFT_ARM_JOINTS),
+        "right_arm": angles(RIGHT_ARM_JOINTS),
+        "left_hand": angles(LEFT_HAND_JOINTS),
+        "right_hand": angles(RIGHT_HAND_JOINTS),
+        "left_hand_curl": FINGERS_LEFT.tolist() if FINGERS_LEFT is not None else None,
+        "right_hand_curl": FINGERS_RIGHT.tolist() if FINGERS_RIGHT is not None else None,
+    }
 
 
 # --------------- Teleop ---------------
@@ -841,6 +871,15 @@ async def sim_state() -> dict[str, Any]:
         if MODEL is None:
             return {"error": "no model"}
         return {"sim": snapshot(), "mode": MODE}
+
+
+@app.get("/api/joint_state")
+async def joint_state_ep() -> dict[str, Any]:
+    """Read-only joint angles + finger curls for a real-robot relay (poll ~50 Hz)."""
+    async with SIM_LOCK:
+        if MODEL is None:
+            return {"error": "no model"}
+        return {"joints": joint_state()}
 
 
 @app.get("/api/g1_manifest")
