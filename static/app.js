@@ -520,7 +520,7 @@ function getTeleopHandRobotZ0() {
     //if (Number.isFinite(v) && v > -3.5 && v < 0.5) return v;
   } catch (_) {}
   //if (Number.isFinite(_robotRoomPos.z) && _robotRoomPos.z < -0.5) return _robotRoomPos.z - 0.22;
-  return -2;
+  return -2.5;
 }
 
 function getTeleopHandReachScale() {

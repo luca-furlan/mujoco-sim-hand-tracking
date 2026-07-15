@@ -49,7 +49,13 @@ _HAND_SMOOTH = float(os.environ.get("HAND_SMOOTH", "0.35"))
 _HAND_FOLLOW_PELVIS = os.environ.get("HAND_FOLLOW_PELVIS", "0").lower() in ("1", "true", "yes")
 _PELVIS_HOME: np.ndarray | None = None
 _ARM_REACH = float(os.environ.get("ARM_REACH", "0.65"))
-_IK_ITERS = int(os.environ.get("IK_ITERS", "14"))
+_IK_ITERS = int(os.environ.get("IK_ITERS", "18"))
+_IK_DLS_LAMBDA = float(os.environ.get("IK_DLS_LAMBDA", "0.08"))
+_IK_NULL_GAIN = float(os.environ.get("IK_NULL_GAIN", "0.35"))
+_IK_STEP_GAIN = float(os.environ.get("IK_STEP_GAIN", "0.45"))
+_IK_CONTINUITY = float(os.environ.get("IK_CONTINUITY", "0.55"))
+_ARM_REST_Q: dict[str, np.ndarray] = {}
+_ARM_LAST_Q: dict[str, np.ndarray | None] = {"left": None, "right": None}
 _HAND_OFF = np.array(
     [
         float(os.environ.get("HAND_OFF_X", "0")),
@@ -163,7 +169,7 @@ def _build_hand_actuator_cache(M: mujoco.MjModel) -> dict[str, list[tuple[int, f
 
 
 def load_model() -> None:
-    global MODEL, DATA, REF_CTRL, _HAND_ACT_CACHE, GEOM_MANIFEST, VIZ_MESH_CACHE, _PELVIS_HOME
+    global MODEL, DATA, REF_CTRL, _HAND_ACT_CACHE, GEOM_MANIFEST, VIZ_MESH_CACHE, _PELVIS_HOME, _ARM_REST_Q, _ARM_LAST_Q
     if MODEL is not None:
         return
     if not SCENE.is_file():
@@ -180,6 +186,11 @@ def load_model() -> None:
     _HAND_ACT_CACHE = _build_hand_actuator_cache(MODEL)
     pelvis_bid = mujoco.mj_name2id(MODEL, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
     _PELVIS_HOME = np.asarray(DATA.xpos[pelvis_bid], dtype=np.float64).copy() if pelvis_bid >= 0 else None
+    _, lq, _ = _arm_actuator_and_qpos(MODEL, LEFT_ARM_JOINTS)
+    _, rq, _ = _arm_actuator_and_qpos(MODEL, RIGHT_ARM_JOINTS)
+    _ARM_REST_Q["left"] = np.array([DATA.qpos[adr] for adr in lq], dtype=np.float64)
+    _ARM_REST_Q["right"] = np.array([DATA.qpos[adr] for adr in rq], dtype=np.float64)
+    _ARM_LAST_Q["left"] = _ARM_LAST_Q["right"] = None
     print(f"  Modello caricato: {MODEL.njnt} joints, {MODEL.nu} actuators, {len(VIZ_GEOM_INDICES)} viz geoms")
     print(f"  STL files: {len(set(GEOM_MANIFEST))} unique")
     mujoco.mj_forward(MODEL, DATA)
@@ -343,17 +354,45 @@ def _arm_actuator_and_qpos(model: mujoco.MjModel, joint_names: list[str]) -> tup
     return aids, qadrs, dof_ids
 
 
+def _ik_joint_weights(n: int) -> np.ndarray:
+    w = np.ones(n, dtype=np.float64)
+    if n > 4:
+        w[4:] = 0.35
+    return w
+
+
+def _ik_dls_step(J: np.ndarray, err: np.ndarray, lambda_: float) -> np.ndarray:
+    n = J.shape[0]
+    A = J @ J.T + (lambda_ ** 2) * np.eye(n, dtype=np.float64)
+    return J.T @ np.linalg.solve(A, err)
+
+
+def _ik_null_space_step(
+    J: np.ndarray,
+    q_arm: np.ndarray,
+    q_pref: np.ndarray,
+    weights: np.ndarray,
+    null_gain: float,
+) -> np.ndarray:
+    J_pinv = np.linalg.pinv(J)
+    N = np.eye(J.shape[1], dtype=np.float64) - J_pinv @ J
+    return N @ (null_gain * weights * (q_pref - q_arm))
+
+
 def _ik_arm_to_target_clean(
     model: mujoco.MjModel,
     data: mujoco.MjData,
+    side: str,
     wrist_bid: int,
     shoulder_bid: int,
     joint_names: list[str],
     dof_ids: list[int],
     qadrs: list[int],
     aids: list[int],
-    target_world: np.ndarray,
+    target_world: np.ndarray | None,
 ) -> None:
+    if target_world is None:
+        return
     q_backup = data.qpos.copy()
     try:
         sh = data.xpos[shoulder_bid]
@@ -363,23 +402,18 @@ def _ik_arm_to_target_clean(
             return
         v = v / d * min(d, _ARM_REACH)
         tgt = sh + v
-        roll_joint = joint_names[1] if len(joint_names) > 1 else ""
-        roll_seed = None
-        roll_aid = -1
-        if roll_joint.endswith("_shoulder_roll_joint"):
-            side_left = roll_joint.startswith("left_")
-            jid_roll = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, roll_joint)
-            adr_roll = qadrs[1]
-            roll_aid = aids[1]
-            lo, hi = model.jnt_range[jid_roll]
-            dy = float(tgt[1] - sh[1])
-            dy_scaled = float(np.clip(dy * 2.5, -2.0, 2.0))
-            if side_left:
-                roll_seed = float(np.clip(0.2 + max(0.0, dy_scaled), lo, hi))
-            else:
-                roll_seed = float(np.clip(-0.2 + min(0.0, dy_scaled), lo, hi))
-            data.qpos[adr_roll] = roll_seed
-            mujoco.mj_forward(model, data)
+
+        n_arm = len(joint_names)
+        weights = _ik_joint_weights(n_arm)
+        q_rest = _ARM_REST_Q.get(side)
+        if q_rest is None:
+            q_rest = np.array([data.qpos[adr] for adr in qadrs], dtype=np.float64)
+        q_last = _ARM_LAST_Q.get(side)
+        if q_last is not None and len(q_last) == n_arm:
+            q_pref = _IK_CONTINUITY * q_last + (1.0 - _IK_CONTINUITY) * q_rest
+        else:
+            q_pref = q_rest.copy()
+
         jac = np.zeros((3, model.nv), dtype=np.float64)
         dof_idx = np.array(dof_ids, dtype=np.int32)
         for _ in range(_IK_ITERS):
@@ -388,27 +422,23 @@ def _ik_arm_to_target_clean(
                 break
             mujoco.mj_jacBody(model, data, jac, None, wrist_bid)
             J = jac[:, dof_idx]
-            try:
-                dq = np.linalg.pinv(J) @ err
-            except np.linalg.LinAlgError:
-                break
-            dq = np.clip(dq, -0.15, 0.15)
+            dq_task = _ik_dls_step(J, err, _IK_DLS_LAMBDA)
+            q_arm = np.array([data.qpos[adr] for adr in qadrs], dtype=np.float64)
+            dq_null = _ik_null_space_step(J, q_arm, q_pref, weights, _IK_NULL_GAIN)
+            dq = np.clip(dq_task + dq_null, -0.15, 0.15)
             for k, dqk in enumerate(dq):
                 adr = qadrs[k]
                 jn = joint_names[k]
                 jid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, jn)
                 lo, hi = model.jnt_range[jid]
                 if lo == 0.0 and hi == 0.0:
-                    data.qpos[adr] += float(0.45 * dqk)
+                    data.qpos[adr] += float(_IK_STEP_GAIN * dqk)
                 else:
-                    data.qpos[adr] = float(np.clip(data.qpos[adr] + 0.45 * dqk, lo, hi))
+                    data.qpos[adr] = float(np.clip(data.qpos[adr] + _IK_STEP_GAIN * dqk, lo, hi))
             mujoco.mj_forward(model, data)
-        if roll_seed is not None and roll_aid >= 0:
-            ik_roll = float(data.qpos[qadrs[1]])
-            data.ctrl[roll_aid] = float(0.2 * roll_seed + 0.8 * ik_roll)
+
+        _ARM_LAST_Q[side] = np.array([data.qpos[adr] for adr in qadrs], dtype=np.float64)
         for k, aid in enumerate(aids):
-            if aid == roll_aid:
-                continue
             data.ctrl[aid] = float(data.qpos[qadrs[k]])
     finally:
         data.qpos[:] = q_backup
@@ -434,7 +464,7 @@ def _pelvis_adjusted_target(target: np.ndarray | None) -> np.ndarray | None:
 
 def reset_sim_state() -> None:
     """Keyframe pose, clear teleop buffers, zero stick cmd."""
-    global HAND_LEFT, HAND_RIGHT, FINGERS_LEFT, FINGERS_RIGHT, HEAD_ORIENTATION, _PELVIS_HOME
+    global HAND_LEFT, HAND_RIGHT, FINGERS_LEFT, FINGERS_RIGHT, HEAD_ORIENTATION, _PELVIS_HOME, _ARM_LAST_Q
     assert MODEL is not None and DATA is not None and REF_CTRL is not None
     mujoco.mj_resetDataKeyframe(MODEL, DATA, 0)
     DATA.ctrl[:] = REF_CTRL
@@ -442,6 +472,7 @@ def reset_sim_state() -> None:
     HAND_LEFT = HAND_RIGHT = None
     FINGERS_LEFT = FINGERS_RIGHT = None
     HEAD_ORIENTATION = None
+    _ARM_LAST_Q["left"] = _ARM_LAST_Q["right"] = None
     for k in CMD:
         CMD[k] = 0.0
     pelvis_bid = mujoco.mj_name2id(MODEL, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
@@ -461,9 +492,9 @@ def apply_hands_ik() -> None:
     la, lq, ld = _arm_actuator_and_qpos(M, LEFT_ARM_JOINTS)
     ra, rq, rd = _arm_actuator_and_qpos(M, RIGHT_ARM_JOINTS)
     if HAND_LEFT is not None:
-        _ik_arm_to_target_clean(M, d, l_wrist, l_sh, LEFT_ARM_JOINTS, ld, lq, la, _pelvis_adjusted_target(HAND_LEFT))
+        _ik_arm_to_target_clean(M, d, "left", l_wrist, l_sh, LEFT_ARM_JOINTS, ld, lq, la, _pelvis_adjusted_target(HAND_LEFT))
     if HAND_RIGHT is not None:
-        _ik_arm_to_target_clean(M, d, r_wrist, r_sh, RIGHT_ARM_JOINTS, rd, rq, ra, _pelvis_adjusted_target(HAND_RIGHT))
+        _ik_arm_to_target_clean(M, d, "right", r_wrist, r_sh, RIGHT_ARM_JOINTS, rd, rq, ra, _pelvis_adjusted_target(HAND_RIGHT))
 
 
 # --------------- Finger retargeting ---------------
