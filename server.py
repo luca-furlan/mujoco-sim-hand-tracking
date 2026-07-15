@@ -46,6 +46,9 @@ VIZ_MESH_CACHE: list[dict[str, Any]] | None = None
 HAND_LEFT: np.ndarray | None = None
 HAND_RIGHT: np.ndarray | None = None
 _HAND_SMOOTH = float(os.environ.get("HAND_SMOOTH", "0.35"))
+_HAND_SMOOTH_MIN = float(os.environ.get("HAND_SMOOTH_MIN", "0.12"))
+_HAND_SMOOTH_LARGE_DIST = float(os.environ.get("HAND_SMOOTH_LARGE_DIST", "0.08"))
+_HAND_MAX_DELTA = float(os.environ.get("HAND_MAX_DELTA", "0.12"))
 _HAND_FOLLOW_PELVIS = os.environ.get("HAND_FOLLOW_PELVIS", "0").lower() in ("1", "true", "yes")
 _PELVIS_HOME: np.ndarray | None = None
 _ARM_REACH = float(os.environ.get("ARM_REACH", "0.65"))
@@ -54,8 +57,12 @@ _IK_DLS_LAMBDA = float(os.environ.get("IK_DLS_LAMBDA", "0.08"))
 _IK_NULL_GAIN = float(os.environ.get("IK_NULL_GAIN", "0.35"))
 _IK_STEP_GAIN = float(os.environ.get("IK_STEP_GAIN", "0.45"))
 _IK_CONTINUITY = float(os.environ.get("IK_CONTINUITY", "0.55"))
+_IK_DQ_MAX = float(os.environ.get("IK_DQ_MAX", "0.12"))
+_IK_DQ_LARGE_ERR = float(os.environ.get("IK_DQ_LARGE_ERR", "0.15"))
+_ARM_SLEW_RATE = float(os.environ.get("ARM_SLEW_RATE", "0.10"))
 _ARM_REST_Q: dict[str, np.ndarray] = {}
 _ARM_LAST_Q: dict[str, np.ndarray | None] = {"left": None, "right": None}
+_ARM_LAST_CTRL: dict[str, np.ndarray | None] = {"left": None, "right": None}
 _HAND_OFF = np.array(
     [
         float(os.environ.get("HAND_OFF_X", "0")),
@@ -191,6 +198,7 @@ def load_model() -> None:
     _ARM_REST_Q["left"] = np.array([DATA.qpos[adr] for adr in lq], dtype=np.float64)
     _ARM_REST_Q["right"] = np.array([DATA.qpos[adr] for adr in rq], dtype=np.float64)
     _ARM_LAST_Q["left"] = _ARM_LAST_Q["right"] = None
+    _ARM_LAST_CTRL["left"] = _ARM_LAST_CTRL["right"] = None
     print(f"  Modello caricato: {MODEL.njnt} joints, {MODEL.nu} actuators, {len(VIZ_GEOM_INDICES)} viz geoms")
     print(f"  STL files: {len(set(GEOM_MANIFEST))} unique")
     mujoco.mj_forward(MODEL, DATA)
@@ -418,28 +426,45 @@ def _ik_arm_to_target_clean(
         dof_idx = np.array(dof_ids, dtype=np.int32)
         for _ in range(_IK_ITERS):
             err = tgt - data.xpos[wrist_bid]
-            if float(np.linalg.norm(err)) < 0.006:
+            err_norm = float(np.linalg.norm(err))
+            if err_norm < 0.006:
                 break
             mujoco.mj_jacBody(model, data, jac, None, wrist_bid)
             J = jac[:, dof_idx]
             dq_task = _ik_dls_step(J, err, _IK_DLS_LAMBDA)
             q_arm = np.array([data.qpos[adr] for adr in qadrs], dtype=np.float64)
             dq_null = _ik_null_space_step(J, q_arm, q_pref, weights, _IK_NULL_GAIN)
-            dq = np.clip(dq_task + dq_null, -0.15, 0.15)
+            dq_cap = _IK_DQ_MAX
+            step_gain = _IK_STEP_GAIN
+            if _IK_DQ_LARGE_ERR > 0.0 and err_norm > _IK_DQ_LARGE_ERR:
+                scale = _IK_DQ_LARGE_ERR / err_norm
+                dq_cap *= max(0.35, scale)
+                step_gain *= max(0.5, scale)
+            dq = np.clip(dq_task + dq_null, -dq_cap, dq_cap)
             for k, dqk in enumerate(dq):
                 adr = qadrs[k]
                 jn = joint_names[k]
                 jid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, jn)
                 lo, hi = model.jnt_range[jid]
                 if lo == 0.0 and hi == 0.0:
-                    data.qpos[adr] += float(_IK_STEP_GAIN * dqk)
+                    data.qpos[adr] += float(step_gain * dqk)
                 else:
-                    data.qpos[adr] = float(np.clip(data.qpos[adr] + _IK_STEP_GAIN * dqk, lo, hi))
+                    data.qpos[adr] = float(np.clip(data.qpos[adr] + step_gain * dqk, lo, hi))
             mujoco.mj_forward(model, data)
 
         _ARM_LAST_Q[side] = np.array([data.qpos[adr] for adr in qadrs], dtype=np.float64)
+        last_ctrl = _ARM_LAST_CTRL.get(side)
         for k, aid in enumerate(aids):
-            data.ctrl[aid] = float(data.qpos[qadrs[k]])
+            desired = float(data.qpos[qadrs[k]])
+            if (
+                _ARM_SLEW_RATE > 0.0
+                and last_ctrl is not None
+                and len(last_ctrl) == n_arm
+            ):
+                delta = desired - float(last_ctrl[k])
+                desired = float(last_ctrl[k]) + float(np.clip(delta, -_ARM_SLEW_RATE, _ARM_SLEW_RATE))
+            data.ctrl[aid] = desired
+        _ARM_LAST_CTRL[side] = np.array([float(data.ctrl[aid]) for aid in aids], dtype=np.float64)
     finally:
         data.qpos[:] = q_backup
         mujoco.mj_forward(model, data)
@@ -448,6 +473,22 @@ def _ik_arm_to_target_clean(
 def _smooth_vec(cur: np.ndarray | None, nxt: np.ndarray, alpha: float) -> np.ndarray:
     if cur is None:
         return nxt.copy()
+    return (1.0 - alpha) * cur + alpha * nxt
+
+
+def _smooth_hand_target(cur: np.ndarray | None, nxt: np.ndarray) -> np.ndarray:
+    """Distance-adaptive smoothing: large hand jumps get extra filtering."""
+    if cur is None:
+        return nxt.copy()
+    delta = nxt - cur
+    dist = float(np.linalg.norm(delta))
+    if _HAND_MAX_DELTA > 0.0 and dist > _HAND_MAX_DELTA:
+        nxt = cur + delta * (_HAND_MAX_DELTA / dist)
+        dist = _HAND_MAX_DELTA
+    alpha = _HAND_SMOOTH
+    if _HAND_SMOOTH_LARGE_DIST > 0.0 and dist > _HAND_SMOOTH_LARGE_DIST:
+        t = min(1.0, (dist - _HAND_SMOOTH_LARGE_DIST) / _HAND_SMOOTH_LARGE_DIST)
+        alpha = _HAND_SMOOTH * (1.0 - t) + _HAND_SMOOTH_MIN * t
     return (1.0 - alpha) * cur + alpha * nxt
 
 
@@ -464,7 +505,7 @@ def _pelvis_adjusted_target(target: np.ndarray | None) -> np.ndarray | None:
 
 def reset_sim_state() -> None:
     """Keyframe pose, clear teleop buffers, zero stick cmd."""
-    global HAND_LEFT, HAND_RIGHT, FINGERS_LEFT, FINGERS_RIGHT, HEAD_ORIENTATION, _PELVIS_HOME, _ARM_LAST_Q
+    global HAND_LEFT, HAND_RIGHT, FINGERS_LEFT, FINGERS_RIGHT, HEAD_ORIENTATION, _PELVIS_HOME, _ARM_LAST_Q, _ARM_LAST_CTRL
     assert MODEL is not None and DATA is not None and REF_CTRL is not None
     mujoco.mj_resetDataKeyframe(MODEL, DATA, 0)
     DATA.ctrl[:] = REF_CTRL
@@ -473,6 +514,7 @@ def reset_sim_state() -> None:
     FINGERS_LEFT = FINGERS_RIGHT = None
     HEAD_ORIENTATION = None
     _ARM_LAST_Q["left"] = _ARM_LAST_Q["right"] = None
+    _ARM_LAST_CTRL["left"] = _ARM_LAST_CTRL["right"] = None
     for k in CMD:
         CMD[k] = 0.0
     pelvis_bid = mujoco.mj_name2id(MODEL, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
@@ -513,6 +555,8 @@ def apply_fingers() -> None:
             if aid < 0 or i >= len(curls):
                 continue
             c = float(np.clip(curls[i], 0.0, 1.0))
+            if side == "right":
+                c = 1.0 - c
             DATA.ctrl[aid] = lo + c * (hi - lo)
 
 
@@ -544,7 +588,6 @@ def _apply_hand_msg(h: Any) -> None:
     global HAND_LEFT, HAND_RIGHT, _HAND_DBG_COUNT
     if not isinstance(h, dict):
         return
-    a = _HAND_SMOOTH
     for side in ("left", "right"):
         if side not in h:
             continue
@@ -561,9 +604,9 @@ def _apply_hand_msg(h: Any) -> None:
             np.array([float(raw[0]), float(raw[1]), float(raw[2])], dtype=np.float64) + _HAND_OFF
         )
         if side == "left":
-            HAND_LEFT = _smooth_vec(HAND_LEFT, tgt, a)
+            HAND_LEFT = _smooth_hand_target(HAND_LEFT, tgt)
         else:
-            HAND_RIGHT = _smooth_vec(HAND_RIGHT, tgt, a)
+            HAND_RIGHT = _smooth_hand_target(HAND_RIGHT, tgt)
     _HAND_DBG_COUNT += 1
     if _HAND_DBG_COUNT <= 3 or _HAND_DBG_COUNT % 60 == 0:
         print(f"  [HAND #{_HAND_DBG_COUNT}] L={HAND_LEFT} R={HAND_RIGHT}", flush=True)
