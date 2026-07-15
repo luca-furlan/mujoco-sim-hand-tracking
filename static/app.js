@@ -520,7 +520,7 @@ function getTeleopHandRobotZ0() {
     //if (Number.isFinite(v) && v > -3.5 && v < 0.5) return v;
   } catch (_) {}
   //if (Number.isFinite(_robotRoomPos.z) && _robotRoomPos.z < -0.5) return _robotRoomPos.z - 0.22;
-  return -2.5;
+  return -2;
 }
 
 function getTeleopHandReachScale() {
@@ -538,7 +538,7 @@ function getTeleopHandReachScale() {
 const TELEOP_HAND_USER_Y0 = 0;
 const TELEOP_HAND_ROBOT_Y0 = 0;
 const TELEOP_HAND_HEIGHT_SCALE = 1;
-const TELEOP_HAND_Y_OFFSET = -1;
+const TELEOP_HAND_Y_OFFSET = 0;
 
 function applyTeleopHandHeightMap(rawY) {
   return (
@@ -2983,14 +2983,7 @@ function _boostCurlForPinch(cur, pinch, gain = 0.9) {
 
 function readFingers(frame, refSpace) {
   const out = {};
-  const tracked = { left: false, right: false };
-  if (!frame || !refSpace) {
-    _fingersTrackedLastFrame.left = _fingersTrackedLastFrame.right = false;
-    _fingersTrackedPrevFrame.left = _fingersTrackedPrevFrame.right = false;
-    return out;
-  }
-  _fingersTrackedPrevFrame.left = _fingersTrackedLastFrame.left;
-  _fingersTrackedPrevFrame.right = _fingersTrackedLastFrame.right;
+  if (!frame || !refSpace) return out;
   const session = frame.session;
   for (const src of session.inputSources) {
     const side = handSide(src);
