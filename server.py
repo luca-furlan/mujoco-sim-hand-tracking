@@ -541,6 +541,19 @@ def apply_hands_ik() -> None:
 
 # --------------- Finger retargeting ---------------
 
+def _finger_curl_to_ctrl(c: float, lo: float, hi: float) -> float:
+    """Map curl 0=open, 1=closed to joint ctrl using open pose at 0 rad."""
+    c = float(np.clip(c, 0.0, 1.0))
+    open_val = float(np.clip(0.0, lo, hi))
+    if abs(lo) > abs(hi):
+        closed_val = lo
+    elif abs(hi) > abs(lo):
+        closed_val = hi
+    else:
+        closed_val = hi
+    return open_val + c * (closed_val - open_val)
+
+
 def apply_fingers() -> None:
     """Map normalized curl values (0=open, 1=closed) to Dex3-1 hand actuators."""
     if MODEL is None or DATA is None or _HAND_ACT_CACHE is None:
@@ -555,9 +568,7 @@ def apply_fingers() -> None:
             if aid < 0 or i >= len(curls):
                 continue
             c = float(np.clip(curls[i], 0.0, 1.0))
-            if side == "right":
-                c = 1.0 - c
-            DATA.ctrl[aid] = lo + c * (hi - lo)
+            DATA.ctrl[aid] = _finger_curl_to_ctrl(c, lo, hi)
 
 
 # --------------- Head -> Waist ---------------

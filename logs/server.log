@@ -383040,3 +383040,583 @@ INFO:     192.168.10.84:47518 - "POST /api/client_log HTTP/1.1" 200 OK
   [HAND #4920] L=None R=None
   [HAND #4980] L=None R=None
   [HAND #5040] L=None R=None
+/home/lab/mujoco-sim-hand-tracking/server.py:778: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+Scene: /home/lab/mujoco-sim-hand-tracking/vendor/mujoco_menagerie/unitree_g1/scene_with_hands.xml
+Modalita' iniziale: realtime
+Apri nel browser (HTTPS - necessario per WebXR su Quest e wss://):
+  https://127.0.0.1:8443/
+  https://192.168.10.94:8443/
+Certificato autofirmato: Avanzate -> Continua verso sito (o equivalente).
+INFO:     Started server process [33174]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on https://0.0.0.0:8443 (Press CTRL+C to quit)
+  Modello caricato: 44 joints, 43 actuators, 49 viz geoms
+  STL files: 49 unique
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"left","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]},{"hand":"right","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+  [CLIENT] [handtrace] R raw=[0.17,0.37,-0.30] mir=[0.17,0.37,-2.44] mj=[0.45,0.17,0.01] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.12,0.51,-0.32] mir=[0.12,0.51,-2.46] mj=[0.47,0.12,0.15] mirrorPath=1 ms=1.00
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"right"},{"hand":"left"}]
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"right","hasHand":false,"profiles":["meta-quest-touch-plus","oculus-touch-v3","oculus-touch-v2","oculus-touch","generic-trigger-squeeze-thumbstick"]}] removed=[]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"left","hasHand":false,"profiles":["meta-quest-touch-plus","oculus-touch-v3","oculus-touch-v2","oculus-touch","generic-trigger-squeeze-thumbstick"]}] removed=[]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [sendInput] ws not open, state=3 frame=7200
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [xr-lens#7200] mode=? blend=opaque views=2 passthroughChk=0 clearARpath=no
+  [CLIENT] [animate#7200] frame=true refSpace=true inputSources=2 [{"hand":"left","hasHand":false,"handSize":0,"hasGrip":true,"hasTarget":true,"profiles":["meta-quest-touch-plus","oculus-touch-v3","oculus-touch-v2","oculus-touch","generic-trigger-squeeze-thumbstick"]},{"hand":"right","hasHand":false,"handSize":0,"hasGrip":true,"hasTarget":true,"profiles":["meta-quest-touch-plus","oculus-touch-v3","oculus-touch-v2","oculus-touch","generic-trigger-squeeze-thumbstick"]}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+INFO:     192.168.10.84:46530 - "WebSocket /ws" [accepted]
+INFO:     connection open
+  [ws] accepted @ 100.0Hz
+  [ws#1] {"type":"ready"}
+  [ws] client ready
+  [ws#2] {"type":"mode","mode":"realtime"}
+  [ws#3] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.9741730041503913,-0.1902290582656858,0.6536969983577728],"right":[1.0807986755371097,-0.18395701050758337,0.6391514086723328]},"fingers":{"left":{"thumb":[0.17668831969037269,0.6934481757242975,0.694
+  [HAND #1] L=[ 0.974173   -0.19022906  0.653697  ] R=[ 1.08079868 -0.18395701  0.63915141]
+  [ws#4] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.9741730041503913,-0.1902290582656858,0.6536969983577728],"right":[1.0807986755371097,-0.18395701050758337,0.6391514086723328]},"fingers":{"left":{"thumb":[0.17668831969037269,0.6934481757242975,0.694
+  [HAND #2] L=[ 0.974173   -0.19022906  0.653697  ] R=[ 1.08079868 -0.18395701  0.63915141]
+  [ws#5] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.6811537857055667,-0.05453002452850327,0.7201214873790741],"right":[1.0807986755371097,-0.18395701050758337,0.6391514086723328]},"fingers":{"left":{"thumb":[0.04623704812508297,0.49061507263776905,0.3
+  [HAND #3] L=[ 0.94910862 -0.17862159  0.65937884] R=[ 1.08079868 -0.18395701  0.63915141]
+  [CLIENT] [ws] connecting to wss://192.168.10.94:8443/ws
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"left"},{"hand":"right"}]
+  [CLIENT] [sendInput] ws not open, state=0 frame=7500
+  [CLIENT] [ws] opened
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"right","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"right","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[{"hand":"right"}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[-0.05,1.08,-0.47] mir=[-0.05,1.08,-2.66] mj=[0.67,-0.05,0.72] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.02,1.10,-0.41] mir=[0.02,1.10,-2.58] mj=[0.59,0.02,0.74] mirrorPath=1 ms=1.00
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"left","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #60] L=[0.49974867 0.15680845 0.75645934] R=[ 0.40279645 -0.07371405  0.72282804]
+  [CLIENT] [handtrace] R raw=[0.17,1.11,-0.33] mir=[0.17,1.11,-2.48] mj=[0.49,0.17,0.75] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #120] L=[0.30654322 0.19437711 0.70951881] R=[ 0.21658655 -0.13663779  0.68823076]
+  [CLIENT] [handtrace] R raw=[0.17,1.09,-0.32] mir=[0.17,1.09,-2.46] mj=[0.47,0.17,0.73] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.19,1.07,-0.19] mir=[0.19,1.07,-2.30] mj=[0.31,0.19,0.71] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.18,1.07,-0.13] mir=[0.18,1.07,-2.22] mj=[0.23,0.18,0.71] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #180] L=[0.22704214 0.17351234 0.71137368] R=[ 0.16408937 -0.14557332  0.68608157]
+  [CLIENT] [handtrace] R raw=[0.17,1.07,-0.13] mir=[0.17,1.07,-2.22] mj=[0.23,0.17,0.71] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.17,1.08,-0.12] mir=[0.17,1.08,-2.21] mj=[0.22,0.17,0.72] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #240] L=[0.22637207 0.17443291 0.71610731] R=[ 0.18396654 -0.14837363  0.69864143]
+  [CLIENT] [handtrace] R raw=[0.17,1.08,-0.13] mir=[0.17,1.08,-2.21] mj=[0.22,0.17,0.72] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.17,1.08,-0.13] mir=[0.17,1.08,-2.22] mj=[0.23,0.17,0.72] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#300] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.22432021331787166,0.17327488958835607,0.7172465467453003],"right":[0.18574862670898473,-0.14800277352333066,0.701737984418869]},"fingers":{"left":{"thumb":[0.04850128566861327,0.8053415457345701,0.76
+  [HAND #300] L=[0.22444601 0.17332302 0.71718584] R=[ 0.18575065 -0.14802074  0.70175821]
+  [CLIENT] [handtrace] R raw=[0.17,1.08,-0.13] mir=[0.17,1.08,-2.21] mj=[0.22,0.17,0.72] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#7800] hands={"left":[0.22423419189453164,0.17344731092453008,0.7168155455589295],"right":[0.18567156982421928,-0.14816290140151975,0
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.17,1.08,-0.13] mir=[0.17,1.08,-2.22] mj=[0.23,0.17,0.72] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #360] L=[0.23045899 0.174769   0.71604567] R=[ 0.20352485 -0.14685607  0.70953786]
+  [CLIENT] [handtrace] R raw=[0.17,1.08,-0.13] mir=[0.17,1.08,-2.22] mj=[0.23,0.17,0.72] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.18,1.08,-0.13] mir=[0.18,1.08,-2.22] mj=[0.23,0.18,0.72] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #420] L=[0.39073331 0.21643087 0.87761406] R=[ 0.40326995 -0.19104837  0.87749061]
+  [CLIENT] [handtrace] R raw=[0.19,1.15,-0.21] mir=[0.19,1.15,-2.33] mj=[0.34,0.19,0.79] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.21,1.24,-0.25] mir=[0.21,1.24,-2.37] mj=[0.38,0.21,0.88] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.20,1.23,-0.24] mir=[0.20,1.23,-2.36] mj=[0.37,0.20,0.87] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #480] L=[0.36731546 0.19752071 0.8724349 ] R=[ 0.37784412 -0.15519901  0.87464506]
+  [CLIENT] [handtrace] R raw=[0.20,1.23,-0.24] mir=[0.20,1.23,-2.36] mj=[0.37,0.20,0.87] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.19,1.23,-0.24] mir=[0.19,1.23,-2.36] mj=[0.37,0.19,0.87] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #540] L=[0.37180015 0.19472693 0.86936182] R=[ 0.36849321 -0.14561666  0.87409575]
+  [CLIENT] [handtrace] R raw=[0.19,1.23,-0.24] mir=[0.19,1.23,-2.36] mj=[0.37,0.19,0.87] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.19,1.23,-0.24] mir=[0.19,1.23,-2.36] mj=[0.37,0.19,0.87] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#600] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.3669008178710944,0.19163711369037637,0.8676482582092285],"right":[0.3615145034790046,-0.13955809175968162,0.8726939105987549]},"fingers":{"left":{"thumb":[0.0180995097823697,0.7402325220380901,0.7409
+  [HAND #600] L=[0.36574847 0.19163821 0.86818079] R=[ 0.3609809  -0.13945477  0.87289737]
+  [CLIENT] [sendInput#8100] hands={"left":[0.37145060729980517,0.19240272045135506,0.8654357933998108],"right":[0.36325064849853583,-0.14076086878776542,0
+  [CLIENT] [handtrace] R raw=[0.19,1.23,-0.24] mir=[0.19,1.23,-2.36] mj=[0.37,0.19,0.87] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.18,1.27,-0.14] mir=[0.18,1.27,-2.23] mj=[0.24,0.18,0.91] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #660] L=[0.15820492 0.17508287 0.89725167] R=[ 0.13303774 -0.11208173  0.89092261]
+  [CLIENT] [handtrace] R raw=[0.18,1.25,-0.08] mir=[0.18,1.25,-2.15] mj=[0.16,0.18,0.89] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.18,1.27,-0.07] mir=[0.18,1.27,-2.15] mj=[0.16,0.18,0.91] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #720] L=[0.14309652 0.17771059 0.88853763] R=[ 0.13235721 -0.09306791  0.86061437]
+  [CLIENT] [handtrace] R raw=[0.18,1.25,-0.07] mir=[0.18,1.25,-2.14] mj=[0.15,0.18,0.89] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.17,1.24,-0.07] mir=[0.17,1.24,-2.14] mj=[0.15,0.17,0.88] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #780] L=[0.19324631 0.17539621 0.87249447] R=[ 0.17345342 -0.12556017  0.87286831]
+  [CLIENT] [handtrace] R raw=[0.17,1.23,-0.10] mir=[0.17,1.23,-2.18] mj=[0.19,0.17,0.87] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.20,1.25,-0.11] mir=[0.20,1.25,-2.19] mj=[0.20,0.20,0.89] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #840] L=[0.16095405 0.40798471 0.97130128] R=[ 0.15006286 -0.39736882  0.99688329]
+  [CLIENT] [handtrace] R raw=[0.39,1.33,-0.10] mir=[0.39,1.33,-2.17] mj=[0.18,0.39,0.97] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.41,1.33,-0.08] mir=[0.41,1.33,-2.15] mj=[0.16,0.41,0.97] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.40,1.33,-0.08] mir=[0.40,1.33,-2.15] mj=[0.16,0.40,0.97] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#8400] hands={"left":[0.16090884399414107,0.39703199267387396,0.9668839120864868],"right":[0.15878802490234434,-0.37820237874984736,0
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#900] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.16140113067627015,0.3964030742645264,0.9665842795372009],"right":[0.1620326538085941,-0.37703546881675715,0.9941204333305359]},"fingers":{"left":{"thumb":[0.01201584273882339,0.7409016384178337,0.726
+  [HAND #900] L=[0.16140982 0.3964056  0.96656881] R=[ 0.1621224  -0.37700675  0.9940988 ]
+  [CLIENT] [handtrace] R raw=[0.40,1.33,-0.08] mir=[0.40,1.33,-2.15] mj=[0.16,0.40,0.97] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.40,1.33,-0.08] mir=[0.40,1.33,-2.15] mj=[0.16,0.40,0.97] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #960] L=[0.16630045 0.40391492 0.9742815 ] R=[ 0.17401822 -0.37256462  0.98966825]
+  [CLIENT] [handtrace] R raw=[0.40,1.33,-0.08] mir=[0.40,1.33,-2.16] mj=[0.17,0.40,0.97] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.39,1.44,-0.07] mir=[0.39,1.44,-2.15] mj=[0.16,0.39,1.08] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1020] L=[0.16162546 0.37689938 1.11250449] R=[ 0.18153345 -0.31708422  1.09925717]
+  [CLIENT] [handtrace] R raw=[0.38,1.47,-0.08] mir=[0.38,1.47,-2.15] mj=[0.16,0.38,1.11] mirrorPath=1 ms=1.00
+  [CLIENT] [xr-lens#8400] mode=? blend=opaque views=2 passthroughChk=0 clearARpath=no
+  [CLIENT] [animate#8400] frame=true refSpace=true inputSources=2 [{"hand":"left","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]},{"hand":"right","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.37,1.47,-0.08] mir=[0.37,1.47,-2.16] mj=[0.17,0.37,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1080] L=[0.17993316 0.36863235 1.10478676] R=[ 0.18968215 -0.31955733  1.0887547 ]
+  [CLIENT] [handtrace] R raw=[0.37,1.47,-0.09] mir=[0.37,1.47,-2.17] mj=[0.18,0.37,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.37,1.47,-0.11] mir=[0.37,1.47,-2.19] mj=[0.20,0.37,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1140] L=[0.18806463 0.36840269 1.11485501] R=[ 0.18715207 -0.32201334  1.08727753]
+  [CLIENT] [handtrace] R raw=[0.37,1.47,-0.10] mir=[0.37,1.47,-2.18] mj=[0.19,0.37,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.37,1.47,-0.10] mir=[0.37,1.47,-2.18] mj=[0.19,0.37,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#1200] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.17921157073974636,0.3655689358711243,1.1151570820808412],"right":[0.18072234344482463,-0.3223696649074554,1.0908373141288759]},"fingers":{"left":{"thumb":[0.1028938486135254,0.10060825975571222,0.066
+  [HAND #1200] L=[0.17789703 0.36484342 1.1143863 ] R=[ 0.17832651 -0.32238445  1.09084601]
+  [CLIENT] [handtrace] R raw=[0.37,1.48,-0.10] mir=[0.37,1.48,-2.18] mj=[0.19,0.37,1.12] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#8700] hands={"left":[0.18641097259521522,0.3693720102310181,1.1155434393882753],"right":[0.18409289550781316,-0.3241611719131469,1.0
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.36,1.47,-0.08] mir=[0.36,1.47,-2.16] mj=[0.17,0.36,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1260] L=[0.16928105 0.35852621 1.10403477] R=[ 0.16588025 -0.32583108  1.08944195]
+  [CLIENT] [handtrace] R raw=[0.36,1.47,-0.08] mir=[0.36,1.47,-2.16] mj=[0.17,0.36,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.08] mir=[0.36,1.46,-2.16] mj=[0.17,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.08] mir=[0.36,1.46,-2.16] mj=[0.17,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1320] L=[0.16848438 0.35770034 1.10115576] R=[ 0.16548744 -0.322888    1.08977279]
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.08] mir=[0.36,1.46,-2.16] mj=[0.17,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.08] mir=[0.36,1.46,-2.16] mj=[0.17,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1380] L=[0.16726156 0.35278422 1.10233276] R=[ 0.16526201 -0.3258078   1.08917317]
+  [CLIENT] [handtrace] R raw=[0.35,1.46,-0.08] mir=[0.35,1.46,-2.16] mj=[0.17,0.35,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.09] mir=[0.36,1.46,-2.17] mj=[0.18,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1440] L=[0.18457368 0.36196883 1.10375296] R=[ 0.19056361 -0.33703839  1.07815048]
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.10] mir=[0.36,1.46,-2.17] mj=[0.18,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.10] mir=[0.36,1.46,-2.17] mj=[0.18,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#1500] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.1864708633422858,0.3584682643413544,1.1007936143875123],"right":[0.1777634735107425,-0.3357571959495544,1.0889001631736757]},"fingers":{"left":{"thumb":[0.14835449348293459,0.7455364880256847,0.78522
+  [HAND #1500] L=[0.18646831 0.35848603 1.10080636] R=[ 0.1777513  -0.33574988  1.08889802]
+  [CLIENT] [sendInput#9000] hands={"left":[0.18522818756103576,0.3581638634204865,1.1015376591682435],"right":[0.1780827636718756,-0.33468219637870783,1.0
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.10] mir=[0.36,1.46,-2.18] mj=[0.19,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.10] mir=[0.36,1.46,-2.18] mj=[0.19,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1560] L=[0.19116997 0.3611494  1.09553432] R=[ 0.177356   -0.32610407  1.0884594 ]
+  [CLIENT] [handtrace] R raw=[0.36,1.46,-0.10] mir=[0.36,1.46,-2.18] mj=[0.19,0.36,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.34,1.45,-0.09] mir=[0.34,1.45,-2.16] mj=[0.17,0.34,1.09] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1620] L=[0.17596791 0.34196654 1.08991856] R=[ 0.17146507 -0.33352366  1.09440506]
+  [CLIENT] [handtrace] R raw=[0.34,1.45,-0.09] mir=[0.34,1.45,-2.16] mj=[0.17,0.34,1.09] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.34,1.45,-0.09] mir=[0.34,1.45,-2.17] mj=[0.18,0.34,1.09] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.34,1.45,-0.10] mir=[0.34,1.45,-2.18] mj=[0.19,0.34,1.09] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1680] L=[0.19003853 0.34037541 1.08325061] R=[ 0.17851698 -0.34057388  1.09344144]
+  [CLIENT] [handtrace] R raw=[0.34,1.44,-0.10] mir=[0.34,1.44,-2.18] mj=[0.19,0.34,1.08] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.35,1.45,-0.10] mir=[0.35,1.45,-2.18] mj=[0.19,0.35,1.09] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1740] L=[0.18928468 0.34820024 1.08446329] R=[ 0.16896805 -0.34219587  1.09281253]
+  [CLIENT] [handtrace] R raw=[0.35,1.44,-0.10] mir=[0.35,1.44,-2.18] mj=[0.19,0.35,1.08] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.35,1.44,-0.11] mir=[0.35,1.44,-2.19] mj=[0.20,0.35,1.08] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#9300] hands={"left":[0.20392684173584041,0.35620895028114324,1.075955286026001],"right":[0.17937049102783242,-0.32099673151969904,1.
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#1800] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.20426848602294956,0.3537993431091309,1.0699764633178712],"right":[0.18087851715087955,-0.32093015313148493,1.0943131589889528]},"fingers":{"left":{"thumb":[0.186858708591286,0.08307458095822766,0.224
+  [HAND #1800] L=[0.20442897 0.35373812 1.07000184] R=[ 0.18072761 -0.3209325   1.0942512 ]
+  [CLIENT] [handtrace] R raw=[0.35,1.43,-0.11] mir=[0.35,1.43,-2.19] mj=[0.20,0.35,1.07] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.35,1.43,-0.12] mir=[0.35,1.43,-2.20] mj=[0.21,0.35,1.07] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1860] L=[0.20787781 0.34205231 1.07440674] R=[ 0.16488086 -0.32651404  1.08332772]
+  [CLIENT] [handtrace] R raw=[0.34,1.43,-0.12] mir=[0.34,1.43,-2.20] mj=[0.21,0.34,1.07] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.34,1.43,-0.12] mir=[0.34,1.43,-2.20] mj=[0.21,0.34,1.07] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1920] L=[0.24006621 0.34484305 1.0586097 ] R=[ 0.20783943 -0.3272321   1.05218965]
+  [CLIENT] [handtrace] R raw=[0.34,1.42,-0.13] mir=[0.34,1.42,-2.22] mj=[0.23,0.34,1.06] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.34,1.42,-0.14] mir=[0.34,1.42,-2.23] mj=[0.24,0.34,1.06] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #1980] L=[0.24083771 0.3479819  1.0443695 ] R=[ 0.20146458 -0.31705222  1.05475253]
+  [CLIENT] [handtrace] R raw=[0.35,1.41,-0.14] mir=[0.35,1.41,-2.24] mj=[0.25,0.35,1.05] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.35,1.40,-0.14] mir=[0.35,1.40,-2.23] mj=[0.24,0.35,1.04] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2040] L=[0.2552066  0.34233229 1.04446938] R=[ 0.19174938 -0.31468455  1.06033943]
+  [CLIENT] [handtrace] R raw=[0.34,1.40,-0.15] mir=[0.34,1.40,-2.24] mj=[0.25,0.34,1.04] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.34,1.41,-0.15] mir=[0.34,1.41,-2.24] mj=[0.25,0.34,1.05] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#2100] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.24174197387695373,0.31439065933227545,1.0236664557456971],"right":[0.20456938934326208,-0.30307853221893305,1.0383327746391298]},"fingers":{"left":{"thumb":[0.11417974924028064,0.784432679694606,0.82
+  [CLIENT] [handtrace] R raw=[0.33,1.40,-0.14] mir=[0.33,1.40,-2.24] mj=[0.25,0.33,1.04] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#9600] hands={"left":[0.2432195587158208,0.328276813030243,1.0321495079994203],"right":[0.19584658813476596,-0.30995470285415644,1.04
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2100] L=[0.24353011 0.31453939 1.02374702] R=[ 0.20575704 -0.3021121   1.03804108]
+  [CLIENT] [handtrace] R raw=[0.30,1.38,-0.15] mir=[0.30,1.38,-2.24] mj=[0.25,0.30,1.02] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.20,1.31,-0.22] mir=[0.20,1.31,-2.33] mj=[0.34,0.20,0.95] mirrorPath=1 ms=1.00
+  [HAND #2160] L=[0.33306731 0.1833796  0.93629922] R=[ 0.30727108 -0.14458876  0.96137242]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.18,1.29,-0.21] mir=[0.18,1.29,-2.32] mj=[0.33,0.18,0.93] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.18,1.29,-0.21] mir=[0.18,1.29,-2.32] mj=[0.33,0.18,0.93] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2220] L=[0.33216665 0.17635298 0.92508817] R=[ 0.31692    -0.13768143  0.97190756]
+  [CLIENT] [handtrace] R raw=[0.18,1.29,-0.21] mir=[0.18,1.29,-2.32] mj=[0.33,0.18,0.93] mirrorPath=1 ms=1.00
+  [CLIENT] [xr-lens#9600] mode=? blend=opaque views=2 passthroughChk=0 clearARpath=no
+  [CLIENT] [animate#9600] frame=true refSpace=true inputSources=2 [{"hand":"left","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]},{"hand":"right","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.17,1.28,-0.21] mir=[0.17,1.28,-2.32] mj=[0.33,0.17,0.92] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2280] L=[0.3165017  0.29163361 0.94066977] R=[ 0.29033759 -0.22500729  0.94582702]
+  [CLIENT] [handtrace] R raw=[0.25,1.30,-0.21] mir=[0.25,1.30,-2.32] mj=[0.33,0.25,0.94] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.40,1.30,-0.14] mir=[0.40,1.30,-2.23] mj=[0.24,0.40,0.94] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2340] L=[0.21945127 0.40536002 0.93598708] R=[ 0.13717017 -0.36087254  0.97957379]
+  [CLIENT] [handtrace] R raw=[0.41,1.30,-0.12] mir=[0.41,1.30,-2.21] mj=[0.22,0.41,0.94] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.40,1.29,-0.13] mir=[0.40,1.29,-2.22] mj=[0.23,0.40,0.93] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#2400] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":1},"hands":{"left":[0.24641833496093812,0.38809710741043096,0.9254905128479004],"right":[0.17356715393066469,-0.3413985967636108,0.9536813640594483]},"fingers":{"left":{"thumb":[0.1372550887286399,0.7663745391683199,0.779
+  [HAND #2400] L=[0.24634437 0.38812445 0.9254974 ] R=[ 0.1736857  -0.34145199  0.95390259]
+  [CLIENT] [handtrace] R raw=[0.39,1.29,-0.14] mir=[0.39,1.29,-2.23] mj=[0.24,0.39,0.93] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#9900] hands={"left":[0.2380704040527346,0.39108064770698553,0.9277435088157654],"right":[0.1629561157226569,-0.3538972437381744,0.96
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.39,1.28,-0.14] mir=[0.39,1.28,-2.24] mj=[0.25,0.39,0.92] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2460] L=[0.25643352 0.37626911 0.91648716] R=[ 0.18933158 -0.33570854  0.94340209]
+  [CLIENT] [handtrace] R raw=[0.38,1.28,-0.15] mir=[0.38,1.28,-2.25] mj=[0.26,0.38,0.92] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.37,1.27,-0.15] mir=[0.37,1.27,-2.25] mj=[0.26,0.37,0.91] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2520] L=[0.25133197 0.3083332  1.06562106] R=[ 0.21338947 -0.26205878  1.04869947]
+  [CLIENT] [handtrace] R raw=[0.35,1.33,-0.16] mir=[0.35,1.33,-2.26] mj=[0.27,0.35,0.97] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.29,1.45,-0.15] mir=[0.29,1.45,-2.24] mj=[0.25,0.29,1.09] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"left"}]
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"left","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+  [CLIENT] [handtrace] R raw=[0.25,1.50,-0.16] mir=[0.25,1.50,-2.25] mj=[0.26,0.25,1.14] mirrorPath=1 ms=1.00
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"left"}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2580] L=[0.26213605 0.23911287 1.13889101] R=[ 0.24538085 -0.21455903  1.15868314]
+  [CLIENT] [handtrace] R raw=[0.24,1.50,-0.16] mir=[0.24,1.50,-2.25] mj=[0.26,0.24,1.14] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"left","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"left"}]
+  [CLIENT] [handtrace] R raw=[0.23,1.49,-0.16] mir=[0.23,1.49,-2.25] mj=[0.26,0.23,1.13] mirrorPath=1 ms=1.00
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"left","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2640] L=[0.27541787 0.22298349 1.1189889 ] R=[ 0.25334283 -0.18158044  1.13085359]
+  [CLIENT] [handtrace] R raw=[0.22,1.48,-0.17] mir=[0.22,1.48,-2.27] mj=[0.28,0.22,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.22,1.48,-0.16] mir=[0.22,1.48,-2.26] mj=[0.27,0.22,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#2700] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.27077330780029363,0.21608217060565954,1.1174234890937806],"right":[0.24894889068603576,-0.17332863807678217,1.1290862107276918]},"fingers":{"left":{"thumb":[0.13860094379004584,0.8093304891119776,0.8
+  [HAND #2700] L=[0.27075899 0.21609298 1.11740676] R=[ 0.24891731 -0.1733396   1.12907743]
+  [CLIENT] [sendInput#10200] hands={"left":[0.26993613433837926,0.21730881929397589,1.1189411425590516],"right":[0.24866976928710982,-0.17336738109588617,1
+  [CLIENT] [handtrace] R raw=[0.22,1.48,-0.16] mir=[0.22,1.48,-2.26] mj=[0.27,0.22,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.21,1.48,-0.17] mir=[0.21,1.48,-2.26] mj=[0.27,0.21,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2760] L=[0.27603386 0.21069657 1.11589835] R=[ 0.24760989 -0.17379083  1.12761407]
+  [CLIENT] [handtrace] R raw=[0.21,1.48,-0.17] mir=[0.21,1.48,-2.27] mj=[0.28,0.21,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.21,1.47,-0.17] mir=[0.21,1.47,-2.27] mj=[0.28,0.21,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2820] L=[0.26951892 0.17793408 1.13200317] R=[ 0.2448397  -0.1536084   1.13849579]
+  [CLIENT] [handtrace] R raw=[0.20,1.48,-0.17] mir=[0.20,1.48,-2.27] mj=[0.28,0.20,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.15,1.52,-0.15] mir=[0.15,1.52,-2.24] mj=[0.25,0.15,1.16] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2880] L=[0.21748778 0.08268085 1.17584297] R=[ 0.20460561 -0.07913559  1.17735749]
+  [CLIENT] [handtrace] R raw=[0.08,1.54,-0.12] mir=[0.08,1.54,-2.21] mj=[0.22,0.08,1.18] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.08,1.53,-0.12] mir=[0.08,1.53,-2.21] mj=[0.22,0.08,1.17] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.08,1.53,-0.11] mir=[0.08,1.53,-2.20] mj=[0.21,0.08,1.17] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #2940] L=[0.20944195 0.06422073 1.16665945] R=[ 0.19234578 -0.05428874  1.17505569]
+  [CLIENT] [handtrace] R raw=[0.05,1.52,-0.12] mir=[0.05,1.52,-2.20] mj=[0.21,0.05,1.16] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.05,1.52,-0.13] mir=[0.05,1.52,-2.21] mj=[0.22,0.05,1.16] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#10500] hands={"left":[0.22007331085205117,0.05031082034111028,1.1583370113372804],"right":[0.20116275024414132,-0.022195026278495743,
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#3000] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.2240318603515632,0.051503021270036746,1.158478810787201],"right":[0.20059867095947292,-0.01980349421501155,1.149563982486725]},"fingers":{"left":{"thumb":[0.06777980907196848,0.7478688631259618,0.752
+  [HAND #3000] L=[0.22403263 0.05136335 1.15844952] R=[ 0.20078199 -0.01979618  1.14948319]
+  [CLIENT] [handtrace] R raw=[0.05,1.52,-0.13] mir=[0.05,1.52,-2.22] mj=[0.23,0.05,1.16] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.05,1.52,-0.13] mir=[0.05,1.52,-2.22] mj=[0.23,0.05,1.16] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3060] L=[0.2289609  0.04465824 1.1540202 ] R=[ 0.21171487 -0.02185845  1.16109749]
+  [CLIENT] [handtrace] R raw=[0.04,1.51,-0.13] mir=[0.04,1.51,-2.22] mj=[0.23,0.04,1.15] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.05,1.51,-0.13] mir=[0.05,1.51,-2.22] mj=[0.23,0.05,1.15] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3120] L=[0.2456034  0.25533221 1.18490486] R=[ 0.16267421 -0.32260633  1.17852472]
+  [CLIENT] [handtrace] R raw=[0.24,1.54,-0.15] mir=[0.24,1.54,-2.24] mj=[0.25,0.24,1.18] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.35,1.50,-0.09] mir=[0.35,1.50,-2.17] mj=[0.18,0.35,1.14] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3180] L=[0.1372964  0.41232908 1.12532356] R=[ 0.01874643 -0.44099613  1.16802132]
+  [CLIENT] [handtrace] R raw=[0.41,1.48,-0.06] mir=[0.41,1.48,-2.13] mj=[0.14,0.41,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.42,1.49,-0.06] mir=[0.42,1.49,-2.13] mj=[0.14,0.42,1.13] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3240] L=[0.14682154 0.42054484 1.12635491] R=[ 0.04324173 -0.42668964  1.16280999]
+  [CLIENT] [handtrace] R raw=[0.42,1.49,-0.07] mir=[0.42,1.49,-2.14] mj=[0.15,0.42,1.13] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.42,1.48,-0.06] mir=[0.42,1.48,-2.14] mj=[0.15,0.42,1.12] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#3300] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.14668879699707094,0.4173427522182465,1.117032482624054],"right":[0.049267303466797197,-0.40867939591407776,1.1551994228363038]},"fingers":{"left":{"thumb":[0.1337174848648286,0.7897630406028386,0.827
+  [HAND #3300] L=[0.14673733 0.41743963 1.11702683] R=[ 0.0492727  -0.40861398  1.15522646]
+  [CLIENT] [handtrace] R raw=[0.42,1.48,-0.06] mir=[0.42,1.48,-2.13] mj=[0.14,0.42,1.12] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#10800] hands={"left":[0.14501033020019594,0.4166729152202607,1.1199453616142274],"right":[0.05049182128906282,-0.41162291169166565,1.
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.42,1.47,-0.07] mir=[0.42,1.47,-2.14] mj=[0.15,0.42,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.42,1.47,-0.07] mir=[0.42,1.47,-2.14] mj=[0.15,0.42,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3360] L=[0.15459216 0.41853169 1.10687517] R=[ 0.04862692 -0.40590266  1.15313584]
+  [CLIENT] [handtrace] R raw=[0.42,1.47,-0.07] mir=[0.42,1.47,-2.15] mj=[0.16,0.42,1.11] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.42,1.46,-0.08] mir=[0.42,1.46,-2.15] mj=[0.16,0.42,1.10] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3420] L=[0.16456768 0.4102655  1.10935187] R=[ 0.04989171 -0.40870458  1.14710516]
+  [CLIENT] [handtrace] R raw=[0.41,1.48,-0.09] mir=[0.41,1.48,-2.16] mj=[0.17,0.41,1.12] mirrorPath=1 ms=1.00
+  [CLIENT] [xr-lens#10800] mode=? blend=opaque views=2 passthroughChk=0 clearARpath=no
+  [CLIENT] [animate#10800] frame=true refSpace=true inputSources=2 [{"hand":"left","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]},{"hand":"right","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.32,1.58,-0.15] mir=[0.32,1.58,-2.24] mj=[0.25,0.32,1.22] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3480] L=[0.23609931 0.26572621 1.20590078] R=[ 0.05653702 -0.38288547  1.14210397]
+  [CLIENT] [handtrace] R raw=[0.27,1.57,-0.14] mir=[0.27,1.57,-2.23] mj=[0.24,0.27,1.21] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.26,1.56,-0.13] mir=[0.26,1.56,-2.22] mj=[0.23,0.26,1.20] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3540] L=[0.24141279 0.2706494  1.20479269] R=[ 0.0890535  -0.39516579  1.13726125]
+  [CLIENT] [handtrace] R raw=[0.27,1.56,-0.14] mir=[0.27,1.56,-2.23] mj=[0.24,0.27,1.20] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.28,1.55,-0.14] mir=[0.28,1.55,-2.24] mj=[0.25,0.28,1.19] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#3600] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.3313400955200201,0.3387075066566468,0.8939461255073547],"right":[0.17267897796630893,-0.3936685919761657,0.8467607641220093]},"fingers":{"left":{"thumb":[0.13184793225152877,0.7645173093807265,0.8001
+  [HAND #3600] L=[0.33262123 0.33856119 0.89374361] R=[ 0.17270823 -0.39284458  0.846628  ]
+  [CLIENT] [sendInput#11100] hands={"left":[0.3032923812866215,0.3344287276268006,1.0297351026535035],"right":[0.13903300476074265,-0.40196302533149714,0.9
+  [CLIENT] [handtrace] R raw=[0.34,1.34,-0.21] mir=[0.34,1.34,-2.32] mj=[0.33,0.34,0.98] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.33,1.18,-0.21] mir=[0.33,1.18,-2.32] mj=[0.33,0.33,0.82] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3660] L=[0.31490077 0.31576339 0.80047182] R=[ 0.21237682 -0.36376945  0.81251151]
+  [CLIENT] [handtrace] R raw=[0.32,1.16,-0.20] mir=[0.32,1.16,-2.31] mj=[0.32,0.32,0.80] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.31,1.16,-0.20] mir=[0.31,1.16,-2.30] mj=[0.31,0.31,0.80] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3720] L=[0.34468689 0.3060118  0.76598307] R=[ 0.22863058 -0.34691049  0.78027293]
+  [CLIENT] [handtrace] R raw=[0.31,1.14,-0.21] mir=[0.31,1.14,-2.32] mj=[0.33,0.31,0.78] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.30,1.12,-0.23] mir=[0.30,1.12,-2.34] mj=[0.35,0.30,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3780] L=[0.37607672 0.27253949 0.74094028] R=[ 0.26400767 -0.29221141  0.75291703]
+  [CLIENT] [handtrace] R raw=[0.29,1.11,-0.24] mir=[0.29,1.11,-2.36] mj=[0.37,0.29,0.75] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.27,1.10,-0.25] mir=[0.27,1.10,-2.37] mj=[0.38,0.27,0.74] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3840] L=[0.39096839 0.19196337 0.75603905] R=[ 0.31734802 -0.22102488  0.76356718]
+  [CLIENT] [handtrace] R raw=[0.22,1.11,-0.25] mir=[0.22,1.11,-2.38] mj=[0.39,0.22,0.75] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.19,1.12,-0.26] mir=[0.19,1.12,-2.38] mj=[0.39,0.19,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#3900] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.38673155975341866,0.14925797283649453,0.7736021423339844],"right":[0.34384429168701236,-0.17538523674011222,0.7752707743644714]},"fingers":{"left":{"thumb":[0.10469545336406004,0.7454917269326744,0.7
+  [HAND #3900] L=[0.3867087  0.14920447 0.77361138] R=[ 0.34389363 -0.17529725  0.77524093]
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.26] mir=[0.16,1.13,-2.39] mj=[0.40,0.16,0.77] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#11400] hands={"left":[0.3926017303466802,0.15249954164028176,0.7713867568969727],"right":[0.3415260620117191,-0.17802831530570976,0.7
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.15,1.13,-0.25] mir=[0.15,1.13,-2.38] mj=[0.39,0.15,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.14,-0.25] mir=[0.14,1.14,-2.37] mj=[0.38,0.14,0.78] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #3960] L=[0.37781528 0.14432376 0.77235623] R=[ 0.35167102 -0.16645118  0.77209966]
+  [CLIENT] [handtrace] R raw=[0.14,1.13,-0.25] mir=[0.14,1.13,-2.37] mj=[0.38,0.14,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.13,-0.25] mir=[0.14,1.13,-2.37] mj=[0.38,0.14,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4020] L=[0.37531692 0.14308592 0.77204824] R=[ 0.3459553  -0.16190177  0.77518546]
+  [CLIENT] [handtrace] R raw=[0.14,1.13,-0.25] mir=[0.14,1.13,-2.37] mj=[0.38,0.14,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.13,-0.24] mir=[0.14,1.13,-2.36] mj=[0.37,0.14,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4080] L=[0.37504105 0.14343048 0.76587764] R=[ 0.34375323 -0.16017129  0.77433148]
+  [CLIENT] [handtrace] R raw=[0.14,1.13,-0.24] mir=[0.14,1.13,-2.36] mj=[0.37,0.14,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.12,-0.24] mir=[0.14,1.12,-2.37] mj=[0.38,0.14,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4140] L=[0.37286032 0.1424895  0.76199666] R=[ 0.34277203 -0.15910958  0.77285634]
+  [CLIENT] [handtrace] R raw=[0.14,1.12,-0.24] mir=[0.14,1.12,-2.36] mj=[0.37,0.14,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.12,-0.24] mir=[0.14,1.12,-2.36] mj=[0.37,0.14,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#4200] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.37099410247802767,0.14094629883766183,0.7608742558956146],"right":[0.3404455871582035,-0.1579016149044036,0.7719671273231506]},"fingers":{"left":{"thumb":[0.10741537133523411,0.7665076718367853,0.764
+  [HAND #4200] L=[0.3710323  0.14095674 0.76094842] R=[ 0.34050738 -0.15789998  0.77189592]
+  [CLIENT] [handtrace] R raw=[0.14,1.12,-0.24] mir=[0.14,1.12,-2.36] mj=[0.37,0.14,0.76] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#11700] hands={"left":[0.3709859008789069,0.14084845781326302,0.7611815774440766],"right":[0.3408494491577152,-0.15889534354209892,0.7
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.12,-0.24] mir=[0.14,1.12,-2.36] mj=[0.37,0.14,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.12,-0.24] mir=[0.14,1.12,-2.36] mj=[0.37,0.14,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4260] L=[0.37314317 0.14131134 0.77047873] R=[ 0.34077361 -0.15648856  0.76964525]
+  [CLIENT] [handtrace] R raw=[0.14,1.13,-0.24] mir=[0.14,1.13,-2.36] mj=[0.37,0.14,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.14,1.16,-0.24] mir=[0.14,1.16,-2.36] mj=[0.37,0.14,0.80] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4320] L=[0.37077702 0.13119663 0.81502516] R=[ 0.33893004 -0.15630994  0.8079051 ]
+  [CLIENT] [handtrace] R raw=[0.13,1.18,-0.24] mir=[0.13,1.18,-2.36] mj=[0.37,0.13,0.82] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.13,1.19,-0.24] mir=[0.13,1.19,-2.35] mj=[0.36,0.13,0.83] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4380] L=[0.37048247 0.12959993 0.82895649] R=[ 0.34986427 -0.14734313  0.82232279]
+  [CLIENT] [handtrace] R raw=[0.13,1.19,-0.24] mir=[0.13,1.19,-2.36] mj=[0.37,0.13,0.83] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.12,1.18,-0.24] mir=[0.12,1.18,-2.36] mj=[0.37,0.12,0.82] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4440] L=[0.37628519 0.12159967 0.81627478] R=[ 0.36243581 -0.14434223  0.80922735]
+  [CLIENT] [handtrace] R raw=[0.12,1.18,-0.24] mir=[0.12,1.18,-2.36] mj=[0.37,0.12,0.82] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.12,1.17,-0.24] mir=[0.12,1.17,-2.37] mj=[0.38,0.12,0.81] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#4500] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":1,"right_trig":1},"hands":{"left":[0.3699366683959966,0.13123974204063424,0.8048094356060028],"right":[0.43210692596435574,-0.2400985062122344,0.7621475303173065]},"fingers":{"left":{"thumb":[0.10478135343755875,0.7616776338410256,0.754
+  [HAND #4500] L=[0.37002667 0.13123441 0.80482456] R=[ 0.43171313 -0.24000335  0.7620526 ]
+  [CLIENT] [handtrace] R raw=[0.13,1.17,-0.24] mir=[0.13,1.17,-2.36] mj=[0.37,0.13,0.81] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#12000] hands={"left":[0.37220671844482456,0.1257500797510148,0.8061397218704224],"right":[0.42382491302490277,-0.1945806145668029,0.7
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.13,1.16,-0.24] mir=[0.13,1.16,-2.36] mj=[0.37,0.13,0.80] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4560] L=[0.36979585 0.13469556 0.79434893] R=[ 0.45715834 -0.37028258  0.78660912]
+  [CLIENT] [handtrace] R raw=[0.13,1.16,-0.24] mir=[0.13,1.16,-2.36] mj=[0.37,0.13,0.80] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.13,1.15,-0.24] mir=[0.13,1.15,-2.36] mj=[0.37,0.13,0.79] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4620] L=[0.37169865 0.13441839 0.78553637] R=[ 0.461355   -0.36510752  0.79336975]
+  [CLIENT] [handtrace] R raw=[0.13,1.15,-0.24] mir=[0.13,1.15,-2.36] mj=[0.37,0.13,0.79] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [xr-lens#12000] mode=? blend=opaque views=2 passthroughChk=0 clearARpath=no
+  [CLIENT] [animate#12000] frame=true refSpace=true inputSources=2 [{"hand":"left","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]},{"hand":"right","hasHand":true,"handSize":25,"hasGrip":true,"hasTarget":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}]
+  [CLIENT] [handtrace] R raw=[0.13,1.14,-0.24] mir=[0.13,1.14,-2.37] mj=[0.38,0.13,0.78] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.15,1.14,-0.24] mir=[0.15,1.14,-2.36] mj=[0.37,0.15,0.78] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4680] L=[0.37109718 0.15438323 0.77093462] R=[ 0.46387529 -0.33994269  0.79669776]
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.24] mir=[0.16,1.13,-2.36] mj=[0.37,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.24] mir=[0.16,1.13,-2.36] mj=[0.37,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4740] L=[0.3725664  0.16130951 0.76910645] R=[ 0.46487758 -0.33329128  0.79815217]
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.24] mir=[0.16,1.13,-2.36] mj=[0.37,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.24] mir=[0.16,1.13,-2.36] mj=[0.37,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#4800] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":1},"hands":{"left":[0.3697995681762698,0.1575559228658677,0.765354528427124],"right":[0.45306510162353564,-0.32456201314926136,0.8060793721675873]},"fingers":{"left":{"thumb":[0.09799858562196376,0.7769864635987654,0.7716
+  [HAND #4800] L=[0.36991354 0.15755872 0.7652159 ] R=[ 0.45311348 -0.32454786  0.80614646]
+  [CLIENT] [sendInput#12300] hands={"left":[0.36992873382568425,0.15747563540935525,0.7658622705936432],"right":[0.45572493743896536,-0.3288957178592681,0.
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.24] mir=[0.16,1.13,-2.36] mj=[0.37,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.12,-0.24] mir=[0.16,1.12,-2.36] mj=[0.37,0.16,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4860] L=[0.3692189  0.15683277 0.76136398] R=[ 0.44846001 -0.31653301  0.81364273]
+  [CLIENT] [handtrace] R raw=[0.16,1.12,-0.24] mir=[0.16,1.12,-2.36] mj=[0.37,0.16,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.12,-0.24] mir=[0.16,1.12,-2.36] mj=[0.37,0.16,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4920] L=[0.36914274 0.15505076 0.75982471] R=[ 0.44230637 -0.31145948  0.81529106]
+  [CLIENT] [handtrace] R raw=[0.16,1.12,-0.24] mir=[0.16,1.12,-2.36] mj=[0.37,0.16,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.12,-0.24] mir=[0.16,1.12,-2.36] mj=[0.37,0.16,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #4980] L=[0.36154685 0.16054987 0.766502  ] R=[ 0.44123499 -0.30296654  0.81460926]
+  [CLIENT] [handtrace] R raw=[0.16,1.12,-0.24] mir=[0.16,1.12,-2.36] mj=[0.37,0.16,0.76] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.35] mj=[0.36,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #5040] L=[0.35887265 0.16268072 0.76596056] R=[ 0.43645242 -0.30108344  0.81759419]
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.35] mj=[0.36,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.35] mj=[0.36,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [ws#5100] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":[0.35431407165527395,0.16122886538505563,0.7680936300754547],"right":[0.43648619842529324,-0.3041352629661559,0.8094894731044769]},"fingers":{"left":{"thumb":[0.058322270735912216,0.0931106815904437,0.2
+  [HAND #5100] L=[0.35432083 0.16118787 0.76808648] R=[ 0.43651024 -0.30415088  0.80943625]
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.35] mj=[0.36,0.16,0.77] mirrorPath=1 ms=1.00
+  [CLIENT] [sendInput#12600] hands={"left":[0.3573965377807624,0.16265095770359048,0.7662575685977936],"right":[0.43602458190918036,-0.30232661962509144,0.
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.34] mj=[0.35,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.34] mj=[0.35,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #5160] L=[0.35121723 0.15799335 0.77204217] R=[ 0.43360961 -0.30499483  0.80504447]
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.34] mj=[0.35,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [handtrace] R raw=[0.16,1.13,-0.23] mir=[0.16,1.13,-2.34] mj=[0.35,0.16,0.77] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #5220] L=[0.27544769 0.16303825 0.88943145] R=[ 0.26843892 -0.20331257  0.91430561]
+  [CLIENT] [handtrace] R raw=[0.16,1.22,-0.19] mir=[0.16,1.22,-2.29] mj=[0.30,0.16,0.86] mirrorPath=1 ms=1.00
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"right"}]
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"left"}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #5280] L=[0.15827728 0.16259693 0.98447509] R=[ 0.09353336 -0.1433862   0.9819566 ]
+  [HAND #5340] L=None R=None
+  [ws#5400] {"type":"input","axes":{"lx":0,"ly":0,"rx":0,"ry":0,"left_trig":0,"right_trig":0},"hands":{"left":null,"right":null},"head":[-1.545557787418365,0.036172725260257374,0.7270961248874664,-0.7866135653313192,0.17049798582122475,-0.08480185753828728,0.5873484320449929]}
+  [HAND #5400] L=None R=None
+  [CLIENT] [sendInput#12900] hands={"left":null,"right":null}
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #5460] L=None R=None
+  [HAND #5520] L=None R=[ 0.64366168 -0.02518077  0.6903841 ]
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"left","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"left"}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
+  [HAND #5580] L=[0.98004916 0.34024099 0.58546247] R=None
+  [CLIENT] [xr] inputsourceschange added=[{"hand":"right","hasHand":true,"profiles":["oculus-hand","generic-hand","generic-hand-select","generic-trigger"]}] removed=[]
+  [CLIENT] [xr] inputsourceschange added=[] removed=[{"hand":"right"}]
+INFO:     192.168.10.84:46506 - "POST /api/client_log HTTP/1.1" 200 OK
